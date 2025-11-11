@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Voyager\\Documents\\SistemaIMC\\SistemaIMC\\SistemaIMC.csproj": {}
+    "C:\\Users\\benja\\source\\repos\\SistemaIMC\\SistemaIMC\\SistemaIMC\\SistemaIMC.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Voyager\\Documents\\SistemaIMC\\SistemaIMC\\SistemaIMC.csproj": {
+    "C:\\Users\\benja\\source\\repos\\SistemaIMC\\SistemaIMC\\SistemaIMC\\SistemaIMC.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Voyager\\Documents\\SistemaIMC\\SistemaIMC\\SistemaIMC.csproj",
+        "projectUniqueName": "C:\\Users\\benja\\source\\repos\\SistemaIMC\\SistemaIMC\\SistemaIMC\\SistemaIMC.csproj",
         "projectName": "SistemaIMC",
-        "projectPath": "C:\\Users\\Voyager\\Documents\\SistemaIMC\\SistemaIMC\\SistemaIMC.csproj",
-        "packagesPath": "C:\\Users\\Voyager\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Voyager\\Documents\\SistemaIMC\\SistemaIMC\\obj\\",
+        "projectPath": "C:\\Users\\benja\\source\\repos\\SistemaIMC\\SistemaIMC\\SistemaIMC\\SistemaIMC.csproj",
+        "packagesPath": "C:\\Users\\benja\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\benja\\Source\\Repos\\SistemaIMC\\SistemaIMC\\SistemaIMC\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\Voyager\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\benja\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
