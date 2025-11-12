@@ -1,0 +1,80 @@
+## Build results
+[Dd]ebug/
+[Rr]elease/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+*.pdb
+*.suo
+*.user
+*.bak
+*.ncb
+*.aps
+*.opt
+*.lst
+*.res
+
+## Visual Studio
+# User-specific files
+*.userprefs
+*.vspscc
+*.vssscc
+*.dsr
+*.vcproj.*.user
+*.vcxproj.*.user
+
+# Visual Studio 2017+ cache/settings
+.vs/
+# Except for the Solution.opendata, which is useful for faster startup.
+!.vs/**/Solution.opendata
+
+# Intermediate files
+[Tt]emp/
+*.[Tt]emp/
+*.tmp
+*.log
+
+# NuGet packages
+packages/
+# The 'packages' folder is generally included in the project root for older
+# projects that don't use PackageReference. Ignore it.
+# The `**/packages/` line below should handle most cases, but this is a fail-safe.
+**/packages/
+# NuGet cache files
+*.nupkg
+.nuget/packages/
+
+# Rider files (if you use JetBrains Rider)
+.idea/
+
+# Windows/OS files
+Thumbs.db
+Desktop.ini
+
+# Project and solution files
+*.csproj.user
+*.vcxproj.user
+*.sln.docstates
+*.vshost.*
+
+# Visual Studio Test files
+TestResults/
+*.trx
+
+# Visual Studio Code files (if you use VS Code)
+.vscode/
+
+# Other Visual Studio files to ignore
+*.vsp
+*.vsa
+*.vsd
+*.vsh
+*.vsmode
+*.webinfo
+*.cache
+*.publishproj
+
+# HACK: If you use the legacy style project format, and you don't commit packages.config,
+# you might want to uncomment the following lines. In modern .NET projects, this is not needed.
+# # Package config files (if not using PackageReference)
+# packages.config
