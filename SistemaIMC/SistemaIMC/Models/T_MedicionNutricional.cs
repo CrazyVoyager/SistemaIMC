@@ -1,7 +1,12 @@
-﻿namespace SistemaIMC.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SistemaIMC.Models
 {
+    [Table("T_MedicionNutricional")]
     public class T_MedicionNutricional
     {
+        [Key]
         public int ID_Medicion { get; set; }
         public int ID_Estudiante { get; set; }
         public DateTime FechaMedicion { get; set; }

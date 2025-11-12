@@ -1,7 +1,12 @@
-﻿namespace SistemaIMC.Models
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace SistemaIMC.Models
 {
+    [Table("T_Usuario")]
     public class T_Usuario
     {
+        [Key]
         public int ID_Uusario { get; set; }
         public string RUT { get; set; }
         public string Nombre { get; set; }

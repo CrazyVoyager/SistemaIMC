@@ -1,0 +1,59 @@
+﻿@model SistemaIMC.Models.T_Estudiante
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>T_Estudiante</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="ID_Estudiante" />
+            <div class="form-group">
+                <label asp-for="NombreCompleto" class="control-label"></label>
+                <input asp-for="NombreCompleto" class="form-control" />
+                <span asp-validation-for="NombreCompleto" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaNacimiento" class="control-label"></label>
+                <input asp-for="FechaNacimiento" class="form-control" />
+                <span asp-validation-for="FechaNacimiento" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Sexo" class="control-label"></label>
+                <input asp-for="Sexo" class="form-control" />
+                <span asp-validation-for="Sexo" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ID_Establecimiento" class="control-label"></label>
+                <input asp-for="ID_Establecimiento" class="form-control" />
+                <span asp-validation-for="ID_Establecimiento" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ID_Curso" class="control-label"></label>
+                <input asp-for="ID_Curso" class="form-control" />
+                <span asp-validation-for="ID_Curso" class="text-danger"></span>
+            </div>
+            <div class="form-group form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="EstadoRegistro" /> @Html.DisplayNameFor(model => model.EstadoRegistro)
+                </label>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

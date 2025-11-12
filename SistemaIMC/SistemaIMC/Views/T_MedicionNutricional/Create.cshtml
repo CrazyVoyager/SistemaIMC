@@ -1,0 +1,68 @@
+﻿@model SistemaIMC.Models.T_MedicionNutricional
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<h1>Create</h1>
+
+<h4>T_MedicionNutricional</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="ID_Estudiante" class="control-label"></label>
+                <input asp-for="ID_Estudiante" class="form-control" />
+                <span asp-validation-for="ID_Estudiante" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaMedicion" class="control-label"></label>
+                <input asp-for="FechaMedicion" class="form-control" />
+                <span asp-validation-for="FechaMedicion" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ID_DocenteEncargado" class="control-label"></label>
+                <input asp-for="ID_DocenteEncargado" class="form-control" />
+                <span asp-validation-for="ID_DocenteEncargado" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Peso_kg" class="control-label"></label>
+                <input asp-for="Peso_kg" class="form-control" />
+                <span asp-validation-for="Peso_kg" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="IMC" class="control-label"></label>
+                <input asp-for="IMC" class="form-control" />
+                <span asp-validation-for="IMC" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ID_CategoriaIMC" class="control-label"></label>
+                <input asp-for="ID_CategoriaIMC" class="form-control" />
+                <span asp-validation-for="ID_CategoriaIMC" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Observaciones" class="control-label"></label>
+                <input asp-for="Observaciones" class="form-control" />
+                <span asp-validation-for="Observaciones" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaRegistro" class="control-label"></label>
+                <input asp-for="FechaRegistro" class="form-control" />
+                <span asp-validation-for="FechaRegistro" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
