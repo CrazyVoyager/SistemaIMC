@@ -1,0 +1,157 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
+using SistemaIMC.Data;
+using SistemaIMC.Models;
+
+namespace SistemaIMC.Controllers
+{
+    public class T_EstablecimientoController : Controller
+    {
+        private readonly TdDbContext _context;
+
+        public T_EstablecimientoController(TdDbContext context)
+        {
+            _context = context;
+        }
+
+        // GET: T_Establecimiento
+        public async Task<IActionResult> Index()
+        {
+            return View(await _context.T_Establecimientos.ToListAsync());
+        }
+
+        // GET: T_Establecimiento/Details/5
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var t_Establecimiento = await _context.T_Establecimientos
+                .FirstOrDefaultAsync(m => m.ID_Establecimiento == id);
+            if (t_Establecimiento == null)
+            {
+                return NotFound();
+            }
+
+            return View(t_Establecimiento);
+        }
+
+        // GET: T_Establecimiento/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: T_Establecimiento/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("ID_Establecimiento,NombreEstablecimiento,ID_Comuna")] T_Establecimiento t_Establecimiento)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(t_Establecimiento);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(t_Establecimiento);
+        }
+
+        // GET: T_Establecimiento/Edit/5
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var t_Establecimiento = await _context.T_Establecimientos.FindAsync(id);
+            if (t_Establecimiento == null)
+            {
+                return NotFound();
+            }
+            return View(t_Establecimiento);
+        }
+
+        // POST: T_Establecimiento/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, [Bind("ID_Establecimiento,NombreEstablecimiento,ID_Comuna")] T_Establecimiento t_Establecimiento)
+        {
+            if (id != t_Establecimiento.ID_Establecimiento)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(t_Establecimiento);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!T_EstablecimientoExists(t_Establecimiento.ID_Establecimiento))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(t_Establecimiento);
+        }
+
+        // GET: T_Establecimiento/Delete/5
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var t_Establecimiento = await _context.T_Establecimientos
+                .FirstOrDefaultAsync(m => m.ID_Establecimiento == id);
+            if (t_Establecimiento == null)
+            {
+                return NotFound();
+            }
+
+            return View(t_Establecimiento);
+        }
+
+        // POST: T_Establecimiento/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var t_Establecimiento = await _context.T_Establecimientos.FindAsync(id);
+            if (t_Establecimiento != null)
+            {
+                _context.T_Establecimientos.Remove(t_Establecimiento);
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
+        }
+
+        private bool T_EstablecimientoExists(int id)
+        {
+            return _context.T_Establecimientos.Any(e => e.ID_Establecimiento == id);
+        }
+    }
+}
