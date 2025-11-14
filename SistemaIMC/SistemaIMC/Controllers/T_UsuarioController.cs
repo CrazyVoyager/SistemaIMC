@@ -34,7 +34,7 @@ namespace SistemaIMC.Controllers
             }
 
             var t_Usuario = await _context.T_Usuario
-                .FirstOrDefaultAsync(m => m.ID_Uusario == id);
+                .FirstOrDefaultAsync(m => m.ID_Usuario == id);
             if (t_Usuario == null)
             {
                 return NotFound();
@@ -54,7 +54,7 @@ namespace SistemaIMC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID_Uusario,RUT,Nombre,CorreoElectronico,Contrasena,ID_Rol,EstadoRegistro")] T_Usuario t_Usuario)
+        public async Task<IActionResult> Create([Bind("ID_Usuario,RUT,Nombre,CorreoElectronico,Contrasena,ID_Rol,EstadoRegistro")] T_Usuario t_Usuario)
         {
             if (ModelState.IsValid)
             {
@@ -86,9 +86,9 @@ namespace SistemaIMC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID_Uusario,RUT,Nombre,CorreoElectronico,Contrasena,ID_Rol,EstadoRegistro")] T_Usuario t_Usuario)
+        public async Task<IActionResult> Edit(int id, [Bind("ID_Usuario,RUT,Nombre,CorreoElectronico,Contrasena,ID_Rol,EstadoRegistro")] T_Usuario t_Usuario)
         {
-            if (id != t_Usuario.ID_Uusario)
+            if (id != t_Usuario.ID_Usuario)
             {
                 return NotFound();
             }
@@ -102,7 +102,7 @@ namespace SistemaIMC.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!T_UsuarioExists(t_Usuario.ID_Uusario))
+                    if (!T_UsuarioExists(t_Usuario.ID_Usuario))
                     {
                         return NotFound();
                     }
@@ -125,7 +125,7 @@ namespace SistemaIMC.Controllers
             }
 
             var t_Usuario = await _context.T_Usuario
-                .FirstOrDefaultAsync(m => m.ID_Uusario == id);
+                .FirstOrDefaultAsync(m => m.ID_Usuario == id);
             if (t_Usuario == null)
             {
                 return NotFound();
@@ -151,7 +151,7 @@ namespace SistemaIMC.Controllers
 
         private bool T_UsuarioExists(int id)
         {
-            return _context.T_Usuario.Any(e => e.ID_Uusario == id);
+            return _context.T_Usuario.Any(e => e.ID_Usuario == id);
         }
     }
 }

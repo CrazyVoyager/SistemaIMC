@@ -1,89 +1,65 @@
-﻿@* Ubicación: SistemaIMC/Views/T_Usuario/Index.cshtml *@
+﻿@model IEnumerable<SistemaIMC.Models.T_Usuario>
 
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-@model List<SistemaIMC.Models.T_Usuario>
-@{
-    ViewData["Title"] = "Gestión de Usuarios";
+    ViewData["Title"] = "Index";
 }
 
-<div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-users me-2"></i>Usuarios</h1>
-        <a asp-action="Create" class="btn btn-primary">
-            <i class="fas fa-plus me-1"></i> Nuevo Usuario
-        </a>
-    </div>
+<h1>Index</h1>
 
-    <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Lista de Usuarios</h6>
-        </div>
-        <div class="card-body">
-            @if (Model != null && Model.Any())
-            {
-                <div class="table-responsive">
-                    <table class="table table-bordered table-hover" width="100%" cellspacing="0">
-                        <thead class="table-light">
-                            <tr>
-                                <th>ID</th>
-                                <th>RUT</th>
-                                <th>Nombre</th>
-                                <th>Correo Electrónico</th>
-                                <th>Rol ID</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach (var usuario in Model)
-                            {
-                                <tr>
-                                    <td>@usuario.ID_Uusario</td>
-                                    <td>@usuario.RUT</td>
-                                    <td>@usuario.Nombre</td>
-                                    <td>@usuario.CorreoElectronico</td>
-                                    <td>@usuario.ID_Rol</td>
-                                    <td>
-                                        @if (usuario.EstadoRegistro)
-                                        {
-                                            <span class="badge bg-success">Activo</span>
-                                        }
-                                        else
-                                        {
-                                            <span class="badge bg-danger">Inactivo</span>
-                                        }
-                                    </td>
-                                    <td>
-                                        <div class="btn-group" role="group">
-                                            <a asp-action="Edit" asp-route-id="@usuario.ID_Uusario"
-                                               class="btn btn-warning btn-sm">
-                                                <i class="fas fa-edit"></i> Editar
-                                            </a>
-                                            <a asp-action="Delete" asp-route-id="@usuario.ID_Uusario"
-                                               class="btn btn-danger btn-sm">
-                                                <i class="fas fa-trash"></i> Eliminar
-                                            </a>
-                                        </div>
-                                    </td>
-                                </tr>
-                            }
-                        </tbody>
-                    </table>
-                </div>
-            }
-            else
-            {
-                <div class="text-center py-4">
-                    <i class="fas fa-users fa-3x text-gray-300 mb-3"></i>
-                    <h5 class="text-gray-500">No hay usuarios registrados</h5>
-                    <p class="text-gray-500">Comienza agregando un nuevo usuario.</p>
-                    <a asp-action="Create" class="btn btn-primary">
-                        <i class="fas fa-plus me-1"></i> Crear Primer Usuario
-                    </a>
-                </div>
-            }
-        </div>
-    </div>
-</div>
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.RUT)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.CorreoElectronico)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Contrasena)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ID_Rol)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.EstadoRegistro)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.RUT)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.CorreoElectronico)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Contrasena)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.ID_Rol)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.EstadoRegistro)
+            </td>
+            <td>
+                <a asp-action="Edit" asp-route-id="@item.ID_Usuario">Edit</a> |
+                <a asp-action="Details" asp-route-id="@item.ID_Usuario">Details</a> |
+                <a asp-action="Delete" asp-route-id="@item.ID_Usuario">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

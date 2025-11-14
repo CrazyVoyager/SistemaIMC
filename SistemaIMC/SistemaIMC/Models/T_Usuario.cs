@@ -7,7 +7,7 @@ namespace SistemaIMC.Models
     public class T_Usuario
     {
         [Key]
-        public int ID_Uusario { get; set; }
+        public int ID_Usuario { get; set; }
         public string RUT { get; set; }
         public string Nombre { get; set; }
         public string CorreoElectronico { get; set; }
