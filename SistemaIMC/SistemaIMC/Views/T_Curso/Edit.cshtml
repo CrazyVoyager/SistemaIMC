@@ -1,39 +1,52 @@
-﻿@model SistemaIMC.Models.T_Curso
+﻿@* Ubicación: SistemaIMC/Views/T_Curso/Edit.cshtml *@
 
+@model SistemaIMC.Models.T_Curso
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Modificar Curso";
 }
 
-<h1>Edit</h1>
+<div class="row justify-content-center">
+    <div class="col-xl-6 col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-warning">
+                    <i class="fas fa-edit me-1"></i> Modificar Curso
+                </h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post" class="needs-validation" novalidate>
 
-<h4>T_Curso</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ID_Curso" />
-            <div class="form-group">
-                <label asp-for="NombreCurso" class="control-label"></label>
-                <input asp-for="NombreCurso" class="form-control" />
-                <span asp-validation-for="NombreCurso" class="text-danger"></span>
+                    <input type="hidden" asp-for="ID_Curso" />
+
+                    <div class="mb-3">
+                        <label asp-for="NombreCurso" class="form-label">Nombre del Curso</label>
+                        <input asp-for="NombreCurso" class="form-control" placeholder="Ej: 1ro Medio A" required>
+                        <span asp-validation-for="NombreCurso" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ID_Establecimiento" class="form-label">Establecimiento</label>
+                        @* Idealmente, usar: <select asp-for="ID_Establecimiento" class="form-select" asp-items="ViewBag.Establecimientos"></select> *@
+                        <input asp-for="ID_Establecimiento" type="number" class="form-control" placeholder="ID del Establecimiento" required>
+                        <span asp-validation-for="ID_Establecimiento" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-save me-1"></i> Actualizar Curso
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="ID_Establecimiento" class="control-label"></label>
-                <input asp-for="ID_Establecimiento" class="form-control" />
-                <span asp-validation-for="ID_Establecimiento" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

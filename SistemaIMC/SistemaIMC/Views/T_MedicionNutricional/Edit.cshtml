@@ -1,69 +1,88 @@
-﻿@model SistemaIMC.Models.T_MedicionNutricional
+﻿@* Ubicación: SistemaIMC/Views/T_MedicionNutricional/Edit.cshtml *@
 
+@model SistemaIMC.Models.T_MedicionNutricional
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Modificar Medición";
 }
 
-<h1>Edit</h1>
+<div class="row justify-content-center">
+    <div class="col-xl-8 col-lg-10">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-warning">
+                    <i class="fas fa-edit me-1"></i> Modificar Medición
+                </h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="Edit" method="post" class="needs-validation" novalidate>
 
-<h4>T_MedicionNutricional</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ID_Medicion" />
-            <div class="form-group">
-                <label asp-for="ID_Estudiante" class="control-label"></label>
-                <input asp-for="ID_Estudiante" class="form-control" />
-                <span asp-validation-for="ID_Estudiante" class="text-danger"></span>
+                    <input type="hidden" asp-for="ID_Medicion" />
+                    @* No incluir FechaRegistro en el formulario, se debe preservar en el controlador *@
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ID_Estudiante" class="form-label">Estudiante</label>
+                            @* Idealmente, usar: <select asp-for="ID_Estudiante" class="form-select" asp-items="ViewBag.Estudiantes"></select> *@
+                            <input asp-for="ID_Estudiante" type="number" class="form-control" placeholder="ID del Estudiante" required>
+                            <span asp-validation-for="ID_Estudiante" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ID_DocenteEncargado" class="form-label">Docente Encargado</label>
+                            @* Idealmente, usar: <select asp-for="ID_DocenteEncargado" class="form-select" asp-items="ViewBag.Docentes"></select> *@
+                            <input asp-for="ID_DocenteEncargado" type="number" class="form-control" placeholder="ID del Docente" required>
+                            <span asp-validation-for="ID_DocenteEncargado" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="FechaMedicion" class="form-label">Fecha de Medición</label>
+                            <input asp-for="FechaMedicion" type="date" class="form-control" required>
+                            <span asp-validation-for="FechaMedicion" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Peso_kg" class="form-label">Peso (kg)</label>
+                            <input asp-for="Peso_kg" type="number" step="0.01" class="form-control" placeholder="Ej: 65.5" required>
+                            <span asp-validation-for="Peso_kg" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="IMC" class="form-label">IMC (Valor)</label>
+                            <input asp-for="IMC" class="form-control" placeholder="Ej: 22.5" required>
+                            <span asp-validation-for="IMC" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ID_CategoriaIMC" class="form-label">Categoría IMC</label>
+                            @* Idealmente, usar: <select asp-for="ID_CategoriaIMC" class="form-select" asp-items="ViewBag.CategoriasIMC"></select> *@
+                            <input asp-for="ID_CategoriaIMC" type="number" class="form-control" placeholder="ID de la Categoría" required>
+                            <span asp-validation-for="ID_CategoriaIMC" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Observaciones" class="form-label">Observaciones (Opcional)</label>
+                        <textarea asp-for="Observaciones" class="form-control" rows="3" placeholder="Observaciones adicionales..."></textarea>
+                        <span asp-validation-for="Observaciones" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-save me-1"></i> Actualizar Medición
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="FechaMedicion" class="control-label"></label>
-                <input asp-for="FechaMedicion" class="form-control" />
-                <span asp-validation-for="FechaMedicion" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ID_DocenteEncargado" class="control-label"></label>
-                <input asp-for="ID_DocenteEncargado" class="form-control" />
-                <span asp-validation-for="ID_DocenteEncargado" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Peso_kg" class="control-label"></label>
-                <input asp-for="Peso_kg" class="form-control" />
-                <span asp-validation-for="Peso_kg" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="IMC" class="control-label"></label>
-                <input asp-for="IMC" class="form-control" />
-                <span asp-validation-for="IMC" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ID_CategoriaIMC" class="control-label"></label>
-                <input asp-for="ID_CategoriaIMC" class="form-control" />
-                <span asp-validation-for="ID_CategoriaIMC" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Observaciones" class="control-label"></label>
-                <input asp-for="Observaciones" class="form-control" />
-                <span asp-validation-for="Observaciones" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="FechaRegistro" class="control-label"></label>
-                <input asp-for="FechaRegistro" class="form-control" />
-                <span asp-validation-for="FechaRegistro" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

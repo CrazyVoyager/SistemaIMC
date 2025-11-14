@@ -1,38 +1,52 @@
-﻿@model SistemaIMC.Models.T_Comuna
+﻿@* Ubicación: SistemaIMC/Views/T_Comuna/Create.cshtml *@
 
+@model SistemaIMC.Models.T_Comuna
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Crear Comuna";
 }
 
-<h1>Create</h1>
+<div class="row justify-content-center">
+    <div class="col-xl-6 col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-plus me-1"></i> Crear Nueva Comuna
+                </h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post" class="needs-validation" novalidate>
 
-<h4>T_Comuna</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="NombreComuna" class="control-label"></label>
-                <input asp-for="NombreComuna" class="form-control" />
-                <span asp-validation-for="NombreComuna" class="text-danger"></span>
+                    @* El ID_Comuna es autoincremental, no se pide *@
+
+                    <div class="mb-3">
+                        <label asp-for="NombreComuna" class="form-label">Nombre de la Comuna</label>
+                        <input asp-for="NombreComuna" class="form-control" placeholder="Ej: Concepción" required>
+                        <span asp-validation-for="NombreComuna" class="text-danger small"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ID_Region" class="form-label">Región</label>
+                        @* Idealmente, usar: <select asp-for="ID_Region" class="form-select" asp-items="ViewBag.Regiones"></select> *@
+                        <input asp-for="ID_Region" type="number" class="form-control" placeholder="ID de la Región" required>
+                        <span asp-validation-for="ID_Region" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Volver al Listado
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-1"></i> Guardar Comuna
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="ID_Region" class="control-label"></label>
-                <input asp-for="ID_Region" class="form-control" />
-                <span asp-validation-for="ID_Region" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

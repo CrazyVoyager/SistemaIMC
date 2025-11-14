@@ -1,33 +1,45 @@
-﻿@model SistemaIMC.Models.T_Region
+﻿@* Ubicación: SistemaIMC/Views/T_Region/Create.cshtml *@
 
+@model SistemaIMC.Models.T_Region
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Crear Región";
 }
 
-<h1>Create</h1>
+<div class="row justify-content-center">
+    <div class="col-xl-6 col-lg-8">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-plus me-1"></i> Crear Nueva Región
+                </h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post" class="needs-validation" novalidate>
 
-<h4>T_Region</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="NombreRegion" class="control-label"></label>
-                <input asp-for="NombreRegion" class="form-control" />
-                <span asp-validation-for="NombreRegion" class="text-danger"></span>
+                    @* El ID_Region es autoincremental, no se pide *@
+
+                    <div class="mb-3">
+                        <label asp-for="NombreRegion" class="form-label">Nombre de la Región</label>
+                        <input asp-for="NombreRegion" class="form-control" placeholder="Ej: Región del Biobío" required>
+                        <span asp-validation-for="NombreRegion" class="text-danger small"></span>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Volver al Listado
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-1"></i> Guardar Región
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

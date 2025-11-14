@@ -1,41 +1,74 @@
-﻿@model IEnumerable<SistemaIMC.Models.T_Curso>
+﻿@* Ubicación: SistemaIMC/Views/T_Curso/Index.cshtml *@
 
 @{
-    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model List<SistemaIMC.Models.T_Curso>
+@{
+    ViewData["Title"] = "Gestión de Cursos";
 }
 
-<h1>Index</h1>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-chalkboard-teacher me-2"></i>Cursos</h1>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Nuevo Curso
+        </a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.NombreCurso)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ID_Establecimiento)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.NombreCurso)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ID_Establecimiento)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID_Curso">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID_Curso">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID_Curso">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Cursos</h6>
+        </div>
+        <div class="card-body">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre del Curso</th>
+                                <th>ID Establecimiento</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var curso in Model)
+                            {
+                                <tr>
+                                    <td>@curso.ID_Curso</td>
+                                    <td>@curso.NombreCurso</td>
+                                    <td>@curso.ID_Establecimiento</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Edit" asp-route-id="@curso.ID_Curso"
+                                               class="btn btn-warning btn-sm">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@curso.ID_Curso"
+                                               class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4">
+                    <i class="fas fa-chalkboard-teacher fa-3x text-gray-300 mb-3"></i>
+                    <h5 class="text-gray-500">No hay cursos registrados</h5>
+                    <p class="text-gray-500">Comienza agregando un nuevo curso.</p>
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> Crear Primer Curso
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>

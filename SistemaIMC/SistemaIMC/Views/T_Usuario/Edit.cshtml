@@ -1,59 +1,81 @@
-﻿@model SistemaIMC.Models.T_Usuario
+﻿@* Ubicación: SistemaIMC/Views/T_Usuario/Edit.cshtml *@
 
+@model SistemaIMC.Models.T_Usuario
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Modificar Usuario";
 }
 
-<h1>Edit</h1>
+<div class="row justify-content-center">
+    <div class="col-xl-8 col-lg-10">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-warning">
+                    <i class="fas fa-edit me-1"></i> Modificar Usuario
+                </h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="Modificar" method="post" class="needs-validation" novalidate>
+                    @* Campo oculto para enviar el ID del usuario que se está modificando *@
+                    <input type="hidden" asp-for="ID_Uusario" />
 
-<h4>T_Usuario</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="ID_Uusario" />
-            <div class="form-group">
-                <label asp-for="RUT" class="control-label"></label>
-                <input asp-for="RUT" class="form-control" />
-                <span asp-validation-for="RUT" class="text-danger"></span>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="RUT" class="form-label">RUT</label>
+                            <input asp-for="RUT" class="form-control" placeholder="12.345.678-9" required>
+                            <span asp-validation-for="RUT" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Nombre" class="form-label">Nombre Completo</label>
+                            <input asp-for="Nombre" class="form-control" placeholder="Ingrese el nombre completo" required>
+                            <span asp-validation-for="Nombre" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CorreoElectronico" class="form-label">Correo Electrónico</label>
+                            <input asp-for="CorreoElectronico" type="email" class="form-control" placeholder="usuario@ejemplo.com" required>
+                            <span asp-validation-for="CorreoElectronico" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ID_Rol" class="form-label">ID de Rol</label>
+                            @* En una aplicación real, esto debería ser un DropDownList cargado desde ViewBag/ViewData *@
+                            <input asp-for="ID_Rol" type="number" class="form-control" required>
+                            <span asp-validation-for="ID_Rol" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="EstadoRegistro" class="form-label">Estado</label>
+                            <select asp-for="EstadoRegistro" class="form-select" required>
+                                <option value="">Seleccionar estado</option>
+                                <option value="true">Activo</option>
+                                <option value="false">Inactivo</option>
+                            </select>
+                            <span asp-validation-for="EstadoRegistro" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    @* NOTA: Se omite intencionalmente el campo Contrasena. 
+                       La modificación de contraseñas debe manejarse en una vista separada y segura. *@
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Cancelar
+                        </a>
+                        <button type="submit" class="btn btn-warning">
+                            <i class="fas fa-save me-1"></i> Actualizar Usuario
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CorreoElectronico" class="control-label"></label>
-                <input asp-for="CorreoElectronico" class="form-control" />
-                <span asp-validation-for="CorreoElectronico" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Contrasena" class="control-label"></label>
-                <input asp-for="Contrasena" class="form-control" />
-                <span asp-validation-for="Contrasena" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ID_Rol" class="control-label"></label>
-                <input asp-for="ID_Rol" class="form-control" />
-                <span asp-validation-for="ID_Rol" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="EstadoRegistro" /> @Html.DisplayNameFor(model => model.EstadoRegistro)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }

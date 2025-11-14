@@ -1,77 +1,84 @@
-﻿@model IEnumerable<SistemaIMC.Models.T_MedicionNutricional>
+﻿@* Ubicación: SistemaIMC/Views/T_MedicionNutricional/Index.cshtml *@
 
 @{
-    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@model List<SistemaIMC.Models.T_MedicionNutricional>
+@{
+    ViewData["Title"] = "Gestión de Mediciones";
 }
 
-<h1>Index</h1>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-weight me-2"></i>Mediciones Nutricionales</h1>
+        <a asp-action="Create" class="btn btn-primary">
+            <i class="fas fa-plus me-1"></i> Nueva Medición
+        </a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ID_Estudiante)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaMedicion)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ID_DocenteEncargado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Peso_kg)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.IMC)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ID_CategoriaIMC)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Observaciones)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaRegistro)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ID_Estudiante)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaMedicion)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ID_DocenteEncargado)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Peso_kg)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IMC)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ID_CategoriaIMC)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Observaciones)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FechaRegistro)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ID_Medicion">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ID_Medicion">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ID_Medicion">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Lista de Mediciones</h6>
+        </div>
+        <div class="card-body">
+            @if (Model != null && Model.Any())
+            {
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover" width="100%" cellspacing="0">
+                        <thead class="table-light">
+                            <tr>
+                                <th>ID</th>
+                                <th>ID Estudiante</th>
+                                <th>Fecha Medición</th>
+                                <th>Peso (kg)</th>
+                                <th>IMC</th>
+                                <th>ID Categoría</th>
+                                <th>ID Docente</th>
+                                <th>Fecha Registro</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var medicion in Model)
+                            {
+                                <tr>
+                                    <td>@medicion.ID_Medicion</td>
+                                    <td>@medicion.ID_Estudiante</td>
+                                    <td>@medicion.FechaMedicion.ToString("dd-MM-yyyy")</td>
+                                    <td>@medicion.Peso_kg</td>
+                                    <td>@medicion.IMC</td>
+                                    <td>@medicion.ID_CategoriaIMC</td>
+                                    <td>@medicion.ID_DocenteEncargado</td>
+                                    <td>@medicion.FechaRegistro.ToString("g")</td>
+                                    <td>
+                                        <div class="btn-group" role="group">
+                                            <a asp-action="Edit" asp-route-id="@medicion.ID_Medicion"
+                                               class="btn btn-warning btn-sm">
+                                                <i class="fas fa-edit"></i> Editar
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@medicion.ID_Medicion"
+                                               class="btn btn-danger btn-sm">
+                                                <i class="fas fa-trash"></i> Eliminar
+                                            </a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="text-center py-4">
+                    <i class="fas fa-weight fa-3x text-gray-300 mb-3"></i>
+                    <h5 class="text-gray-500">No hay mediciones registradas</h5>
+                    <p class="text-gray-500">Comienza agregando una nueva medición.</p>
+                    <a asp-action="Create" class="btn btn-primary">
+                        <i class="fas fa-plus me-1"></i> Registrar Primera Medición
+                    </a>
+                </div>
+            }
+        </div>
+    </div>
+</div>
