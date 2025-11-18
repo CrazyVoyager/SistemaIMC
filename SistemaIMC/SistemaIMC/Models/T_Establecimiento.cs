@@ -9,6 +9,8 @@ namespace SistemaIMC.Models
         [Key]
         public int ID_Establecimiento { get; set; }
         public string NombreEstablecimiento { get; set; }
+        public string Direccion { get; set; }
         public int ID_Comuna { get; set; }
+        public bool EstadoRegistro { get; set; }
     }
 }

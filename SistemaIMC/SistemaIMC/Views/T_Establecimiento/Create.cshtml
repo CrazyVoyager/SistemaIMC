@@ -23,12 +23,25 @@
                         <input asp-for="NombreEstablecimiento" class="form-control" placeholder="Ej: Liceo A-1" required>
                         <span asp-validation-for="NombreEstablecimiento" class="text-danger small"></span>
                     </div>
+                    <div class="mb-3">
+                        <label asp-for="Direccion" class="form-label">Dirección del Establecimiento</label>
+                        <input asp-for="Direccion" class="form-control" placeholder="Ej: Calle 123" required>
+                        <span asp-validation-for="Direccion" class="text-danger small"></span>
+                    </div>
 
                     <div class="mb-3">
                         <label asp-for="ID_Comuna" class="form-label">Comuna</label>
                         @* Idealmente, usar: <select asp-for="ID_Comuna" class="form-select" asp-items="ViewBag.Comunas"></select> *@
                         <input asp-for="ID_Comuna" type="number" class="form-control" placeholder="ID de la Comuna" required>
                         <span asp-validation-for="ID_Comuna" class="text-danger small"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="EstadoRegistro" class="form-label">Estado</label>
+                        <select asp-for="EstadoRegistro" class="form-select" required>
+                            <option value="true">Activo</option>
+                            <option value="false">Inactivo</option>
+                        </select>
+                        <span asp-validation-for="EstadoRegistro" class="text-danger small"></span>
                     </div>
 
                     <div class="d-flex justify-content-between mt-4">

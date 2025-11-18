@@ -18,6 +18,12 @@
 
                     <input type="hidden" asp-for="ID_Estudiante" />
 
+                    <div class="form-group">
+                        <label asp-for="RUT" class="control-label"></label>
+                        <input asp-for="RUT" class="form-control" />
+                        <span asp-validation-for="RUT" class="text-danger"></span>
+                    </div>
+
                     <div class="mb-3">
                         <label asp-for="NombreCompleto" class="form-label">Nombre Completo</label>
                         <input asp-for="NombreCompleto" class="form-control" placeholder="Ingrese el nombre completo" required>
@@ -34,9 +40,8 @@
                             <label asp-for="Sexo" class="form-label">Sexo</label>
                             <select asp-for="Sexo" class="form-select" required>
                                 <option value="">Seleccionar sexo</option>
-                                <option value="Masculino">Masculino</option>
-                                <option value="Femenino">Femenino</option>
-                                <option value="Otro">Otro</option>
+                                <option value="M">Masculino</option>
+                                <option value="F">Femenino</option>
                             </select>
                             <span asp-validation-for="Sexo" class="text-danger small"></span>
                         </div>

@@ -54,7 +54,7 @@ namespace SistemaIMC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID_Estudiante,NombreCompleto,FechaNacimiento,Sexo,ID_Establecimiento,ID_Curso,EstadoRegistro")] T_Estudiante t_Estudiante)
+        public async Task<IActionResult> Create([Bind("ID_Estudiante,RUT,NombreCompleto,FechaNacimiento,Sexo,ID_Establecimiento,ID_Curso,EstadoRegistro")] T_Estudiante t_Estudiante)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace SistemaIMC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID_Estudiante,NombreCompleto,FechaNacimiento,Sexo,ID_Establecimiento,ID_Curso,EstadoRegistro")] T_Estudiante t_Estudiante)
+        public async Task<IActionResult> Edit(int id, [Bind("ID_Estudiante,RUT,NombreCompleto,FechaNacimiento,Sexo,ID_Establecimiento,ID_Curso,EstadoRegistro")] T_Estudiante t_Estudiante)
         {
             if (id != t_Estudiante.ID_Estudiante)
             {

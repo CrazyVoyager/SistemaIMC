@@ -1,58 +1,83 @@
-﻿@model SistemaIMC.Models.T_Usuario
+﻿@* Ubicación: SistemaIMC/Views/Usuarios/Create.cshtml *@
 
+@model SistemaIMC.Models.T_Usuario
 @{
-    ViewData["Title"] = "Create";
+    ViewData["Title"] = "Crear Usuario";
 }
 
-<h1>Create</h1>
+<div class="row justify-content-center">
+    <div class="col-xl-8 col-lg-10">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">
+                    <i class="fas fa-user-plus me-1"></i> Crear Nuevo Usuario
+                </h6>
+            </div>
+            <div class="card-body">
+                <form asp-action="Create" method="post" class="needs-validation" novalidate>
 
-<h4>T_Usuario</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="RUT" class="control-label"></label>
-                <input asp-for="RUT" class="form-control" />
-                <span asp-validation-for="RUT" class="text-danger"></span>
+                    @* El ID_Usuario no se pide, ya que es autoincremental (Key) *@
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="RUT" class="form-label">RUT</label>
+                            <input asp-for="RUT" class="form-control" placeholder="12.345.678-9" required>
+                            <span asp-validation-for="RUT" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Nombre" class="form-label">Nombre Completo</label>
+                            <input asp-for="Nombre" class="form-control" placeholder="Ingrese el nombre completo" required>
+                            <span asp-validation-for="Nombre" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CorreoElectronico" class="form-label">Correo Electrónico</label>
+                            <input asp-for="CorreoElectronico" type="email" class="form-control" placeholder="usuario@ejemplo.com" required>
+                            <span asp-validation-for="CorreoElectronico" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="ID_Rol" class="form-label">ID de Rol</label>
+                            @* Idealmente, esto sería un DropDownList cargado desde el controlador (ViewBag.Roles) *@
+                            <input asp-for="ID_Rol" type="number" class="form-control" placeholder="Ej: 1 (Admin), 2 (Usuario)" required>
+                            <span asp-validation-for="ID_Rol" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Contrasena" class="form-label">Contraseña</label>
+                            <input asp-for="Contrasena" type="password" class="form-control" placeholder="Contraseña de acceso" required>
+                            <span asp-validation-for="Contrasena" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="EstadoRegistro" class="form-label">Estado Inicial</label>
+                            <select asp-for="EstadoRegistro" class="form-select" required>
+                                <option value="">Seleccionar estado</option>
+                                <option value="true">Activo</option>
+                                <option value="false">Inactivo</option>
+                            </select>
+                            <span asp-validation-for="EstadoRegistro" class="text-danger small"></span>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left me-1"></i> Volver al Listado
+                        </a>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-save me-1"></i> Guardar Usuario
+                        </button>
+                    </div>
+                </form>
             </div>
-            <div class="form-group">
-                <label asp-for="Nombre" class="control-label"></label>
-                <input asp-for="Nombre" class="form-control" />
-                <span asp-validation-for="Nombre" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CorreoElectronico" class="control-label"></label>
-                <input asp-for="CorreoElectronico" class="form-control" />
-                <span asp-validation-for="CorreoElectronico" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Contrasena" class="control-label"></label>
-                <input asp-for="Contrasena" class="form-control" />
-                <span asp-validation-for="Contrasena" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ID_Rol" class="control-label"></label>
-                <input asp-for="ID_Rol" class="form-control" />
-                <span asp-validation-for="ID_Rol" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="EstadoRegistro" /> @Html.DisplayNameFor(model => model.EstadoRegistro)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
