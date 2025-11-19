@@ -44,8 +44,9 @@ namespace SistemaIMC.Controllers
         }
 
         // GET: T_Curso/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            await LoadEstablecimientosViewBag();
             return View();
         }
 
@@ -62,6 +63,8 @@ namespace SistemaIMC.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            await LoadEstablecimientosViewBag(t_Curso.ID_Establecimiento);
             return View(t_Curso);
         }
 
@@ -113,6 +116,8 @@ namespace SistemaIMC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            await LoadEstablecimientosViewBag(t_Curso.ID_Establecimiento);
             return View(t_Curso);
         }
 
@@ -149,6 +154,16 @@ namespace SistemaIMC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
+        private async Task LoadEstablecimientosViewBag(object selectedEstablecimiento = null)
+        {
+            // Se usa ID_Establecimiento como nombre del ViewBag para que sea intuitivo
+            ViewBag.ID_Establecimiento = new SelectList(
+                await _context.T_Establecimientos.OrderBy(e => e.NombreEstablecimiento).ToListAsync(),
+                "ID_Establecimiento", // Valor de la opción
+                "NombreEstablecimiento", // Texto de la opción
+                selectedEstablecimiento // Opción seleccionada
+            );
+        }
         private bool T_CursoExists(int id)
         {
             return _context.T_Cursos.Any(e => e.ID_Curso == id);

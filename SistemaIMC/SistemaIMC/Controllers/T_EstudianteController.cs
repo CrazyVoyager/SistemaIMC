@@ -44,8 +44,23 @@ namespace SistemaIMC.Controllers
         }
 
         // GET: T_Estudiante/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            // Cargar Establecimientos
+    ViewBag.ID_Establecimiento = new SelectList(
+        await _context.T_Establecimientos.OrderBy(e => e.NombreEstablecimiento).ToListAsync(),
+        "ID_Establecimiento",
+        "NombreEstablecimiento"
+    );
+
+            // Cargar Cursos
+            ViewBag.ID_Curso = new SelectList(
+                await _context.T_Cursos.OrderBy(c => c.NombreCurso).ToListAsync(),
+                "ID_Curso",
+                "NombreCurso"
+            );
+
+
             return View();
         }
 
@@ -54,7 +69,7 @@ namespace SistemaIMC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID_Estudiante,RUT,NombreCompleto,FechaNacimiento,Sexo,ID_Establecimiento,ID_Curso,EstadoRegistro")] T_Estudiante t_Estudiante)
+        public async Task<IActionResult> Create([Bind("ID_Estudiante,RUT,NombreCompleto,FechaNacimiento,ID_Sexo,ID_Establecimiento,ID_Curso,EstadoRegistro")] T_Estudiante t_Estudiante)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +101,7 @@ namespace SistemaIMC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID_Estudiante,RUT,NombreCompleto,FechaNacimiento,Sexo,ID_Establecimiento,ID_Curso,EstadoRegistro")] T_Estudiante t_Estudiante)
+        public async Task<IActionResult> Edit(int id, [Bind("ID_Estudiante,RUT,NombreCompleto,FechaNacimiento,ID_Sexo,ID_Establecimiento,ID_Curso,EstadoRegistro")] T_Estudiante t_Estudiante)
         {
             if (id != t_Estudiante.ID_Estudiante)
             {
@@ -153,5 +168,22 @@ namespace SistemaIMC.Controllers
         {
             return _context.T_Estudiante.Any(e => e.ID_Estudiante == id);
         }
+
+        [HttpGet]
+        public async Task<JsonResult> GetCursosByEstablecimiento(int idEstablecimiento)
+        {
+            var cursos = await _context.T_Cursos
+                .Where(c => c.ID_Establecimiento == idEstablecimiento)
+                .OrderBy(c => c.NombreCurso)
+                .Select(c => new
+                {
+                    id = c.ID_Curso,
+                    name = c.NombreCurso
+                })
+                .ToListAsync();
+
+            return Json(cursos);
+        }
+
     }
 }

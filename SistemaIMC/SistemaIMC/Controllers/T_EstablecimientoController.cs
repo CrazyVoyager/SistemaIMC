@@ -44,14 +44,14 @@ namespace SistemaIMC.Controllers
         }
 
         // GET: T_Establecimiento/Create
-        public IActionResult Create()
+        // ⭐ CAMBIO: Método asíncrono y carga del ViewBag ⭐
+        public async Task<IActionResult> Create()
         {
+            await LoadComunasViewBag();
             return View();
         }
 
         // POST: T_Establecimiento/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID_Establecimiento,NombreEstablecimiento, Direccion, ID_Comuna, EstadoRegistro")] T_Establecimiento t_Establecimiento)
@@ -62,6 +62,9 @@ namespace SistemaIMC.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            // ⭐ Se recarga el ViewBag si la validación falla ⭐
+            await LoadComunasViewBag(t_Establecimiento.ID_Comuna);
             return View(t_Establecimiento);
         }
 
@@ -78,12 +81,13 @@ namespace SistemaIMC.Controllers
             {
                 return NotFound();
             }
+
+            // ⭐ Se carga el ViewBag para edición ⭐
+            await LoadComunasViewBag(t_Establecimiento.ID_Comuna);
             return View(t_Establecimiento);
         }
 
         // POST: T_Establecimiento/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID_Establecimiento,NombreEstablecimiento, Direccion,ID_Comuna, EstadoRegistro")] T_Establecimiento t_Establecimiento)
@@ -113,6 +117,9 @@ namespace SistemaIMC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            // ⭐ Se recarga el ViewBag si la validación falla en Edit ⭐
+            await LoadComunasViewBag(t_Establecimiento.ID_Comuna);
             return View(t_Establecimiento);
         }
 
@@ -147,6 +154,18 @@ namespace SistemaIMC.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        // ⭐ MÉTODO AUXILIAR PARA CARGAR LAS COMUNAS ⭐
+        private async Task LoadComunasViewBag(object selectedComuna = null)
+        {
+            // Asumo que tu contexto tiene una tabla T_Comunas
+            ViewBag.ID_Comuna = new SelectList(
+                await _context.T_Comunas.OrderBy(c => c.NombreComuna).ToListAsync(),
+                "ID_Comuna",
+                "NombreComuna",
+                selectedComuna
+            );
         }
 
         private bool T_EstablecimientoExists(int id)

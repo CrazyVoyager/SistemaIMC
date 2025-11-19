@@ -12,5 +12,9 @@ namespace SistemaIMC.Models
         public string Direccion { get; set; }
         public int ID_Comuna { get; set; }
         public bool EstadoRegistro { get; set; }
+
+        // Propiedad de navegación
+        [ForeignKey("ID_Establecimiento")]
+        public T_Establecimiento Establecimiento { get; set; }
     }
 }

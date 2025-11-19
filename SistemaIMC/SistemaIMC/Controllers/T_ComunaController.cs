@@ -44,14 +44,13 @@ namespace SistemaIMC.Controllers
         }
 
         // GET: T_Comuna/Create
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            await LoadRegionesViewBag();
             return View();
         }
 
         // POST: T_Comuna/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID_Comuna,NombreComuna,ID_Region")] T_Comuna t_Comuna)
@@ -62,6 +61,9 @@ namespace SistemaIMC.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            // Ya está marcado como async, y la recarga es correcta
+            await LoadRegionesViewBag(t_Comuna.ID_Region);
             return View(t_Comuna);
         }
 
@@ -78,12 +80,13 @@ namespace SistemaIMC.Controllers
             {
                 return NotFound();
             }
+
+            await LoadRegionesViewBag(t_Comuna.ID_Region);
+
             return View(t_Comuna);
         }
 
         // POST: T_Comuna/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ID_Comuna,NombreComuna,ID_Region")] T_Comuna t_Comuna)
@@ -113,6 +116,9 @@ namespace SistemaIMC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+
+            await LoadRegionesViewBag(t_Comuna.ID_Region);
+
             return View(t_Comuna);
         }
 
@@ -147,6 +153,16 @@ namespace SistemaIMC.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        private async Task LoadRegionesViewBag(object selectedRegion = null)
+        {
+            ViewBag.ID_Region = new SelectList(
+                await _context.T_Region.OrderBy(r => r.NombreRegion).ToListAsync(),
+                "ID_Region",
+                "NombreRegion",
+                selectedRegion
+            );
         }
 
         private bool T_ComunaExists(int id)

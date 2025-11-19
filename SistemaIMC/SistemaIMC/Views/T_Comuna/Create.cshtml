@@ -26,8 +26,9 @@
 
                     <div class="mb-3">
                         <label asp-for="ID_Region" class="form-label">Región</label>
-                        @* Idealmente, usar: <select asp-for="ID_Region" class="form-select" asp-items="ViewBag.Regiones"></select> *@
-                        <input asp-for="ID_Region" type="number" class="form-control" placeholder="ID de la Región" required>
+                        <select asp-for="ID_Region" class="form-select" asp-items="ViewBag.ID_Region" required>
+                            <option value="">Seleccionar Región</option>
+                        </select>
                         <span asp-validation-for="ID_Region" class="text-danger small"></span>
                     </div>
 

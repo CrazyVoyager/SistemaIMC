@@ -36,27 +36,30 @@
                             <span asp-validation-for="FechaNacimiento" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6 mb-3">
-                            <label asp-for="Sexo" class="form-label">Sexo</label>
-                            <select asp-for="Sexo" class="form-select" required>
+                            <label asp-for="ID_Sexo" class="form-label">Sexo</label>
+                            <select asp-for="ID_Sexo" class="form-select" required>
                                 <option value="">Seleccionar sexo</option>
-                                <option value="M">Masculino</option>
-                                <option value="F">Femenino</option>
+                                <option value="1">Masculino</option>
+                                <option value="2">Femenino</option>
                             </select>
-                            <span asp-validation-for="Sexo" class="text-danger small"></span>
+                            <span asp-validation-for="ID_Sexo" class="text-danger small"></span>
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label asp-for="ID_Establecimiento" class="form-label">Establecimiento</label>
-                            @* Idealmente, usar: <select asp-for="ID_Establecimiento" class="form-select" asp-items="ViewBag.Establecimientos"></select> *@
-                            <input asp-for="ID_Establecimiento" type="number" class="form-control" placeholder="ID del Establecimiento" required>
+                            <select asp-for="ID_Establecimiento" id="ddlEstablecimiento" class="form-select" asp-items="ViewBag.ID_Establecimiento" required>
+                                <option value="">Seleccionar Establecimiento</option>
+                            </select>
                             <span asp-validation-for="ID_Establecimiento" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label asp-for="ID_Curso" class="form-label">Curso</label>
-                            @* Idealmente, usar: <select asp-for="ID_Curso" class="form-select" asp-items="ViewBag.Cursos"></select> *@
-                            <input asp-for="ID_Curso" type="number" class="form-control" placeholder="ID del Curso" required>
+                            @* ⭐ CAMBIO: Se agrega el ID y se marca como disabled ⭐ *@
+                            <select asp-for="ID_Curso" id="ddlCurso" class="form-select" disabled required>
+                                <option value="">Seleccionar Curso</option>
+                            </select>
                             <span asp-validation-for="ID_Curso" class="text-danger small"></span>
                         </div>
                     </div>
