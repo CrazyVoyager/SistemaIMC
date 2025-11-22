@@ -46,12 +46,14 @@ namespace SistemaIMC.Controllers
         // GET: T_Usuario/Create
         public IActionResult Create()
         {
+            // Cargar la lista de roles para el Dropdown
+            // Asegúrate de cambiar 'T_Roles' y 'NombreRol' por los nombres reales en tu BD
+            ViewData["ID_Rol"] = new SelectList(_context.T_Rol, "ID_Rol", "NombreRol");
+
             return View();
         }
 
-        // POST: T_Usuario/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        // 2. Modifica el método POST (Create) para recargar la lista si hay error
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID_Usuario,RUT,Nombre,CorreoElectronico,Contrasena,ID_Rol,EstadoRegistro")] T_Usuario t_Usuario)
@@ -62,6 +64,10 @@ namespace SistemaIMC.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+
+            // IMPORTANTE: Si falla la validación, recargamos el ViewBag
+            ViewData["ID_Rol"] = new SelectList(_context.T_Rol, "ID_Rol", "NombreRol", t_Usuario.ID_Rol);
+
             return View(t_Usuario);
         }
 

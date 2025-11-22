@@ -31,6 +31,7 @@
                                 <th>ID Estudiante</th>
                                 <th>Fecha Medición</th>
                                 <th>Peso (kg)</th>
+                                <th>Estatura (cm)</th>
                                 <th>IMC</th>
                                 <th>ID Categoría</th>
                                 <th>ID Docente</th>
@@ -46,12 +47,17 @@
                                     <td>@medicion.ID_Estudiante</td>
                                     <td>@medicion.FechaMedicion.ToString("dd-MM-yyyy")</td>
                                     <td>@medicion.Peso_kg</td>
+                                    <td>@medicion.Estatura_cm</td>
                                     <td>@medicion.IMC</td>
                                     <td>@medicion.ID_CategoriaIMC</td>
                                     <td>@medicion.ID_DocenteEncargado</td>
                                     <td>@medicion.FechaRegistro.ToString("g")</td>
                                     <td>
                                         <div class="btn-group" role="group">
+                                            <a asp-action="Details" asp-route-id="@medicion.ID_Medicion"
+                                               class="btn btn-info btn-sm">
+                                                <i class="fas fa-info-circle"></i> Detalles
+                                            </a>
                                             <a asp-action="Edit" asp-route-id="@medicion.ID_Medicion"
                                                class="btn btn-warning btn-sm">
                                                 <i class="fas fa-edit"></i> Editar

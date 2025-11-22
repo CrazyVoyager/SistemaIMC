@@ -17,19 +17,21 @@
                 <form asp-action="Edit" method="post" class="needs-validation" novalidate>
 
                     <input type="hidden" asp-for="ID_Medicion" />
-                    @* No incluir FechaRegistro en el formulario, se debe preservar en el controlador *@
+                    <input type="hidden" asp-for="FechaRegistro" /> @* Para preservar la fecha de registro original *@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label asp-for="ID_Estudiante" class="form-label">Estudiante</label>
-                            @* Idealmente, usar: <select asp-for="ID_Estudiante" class="form-select" asp-items="ViewBag.Estudiantes"></select> *@
-                            <input asp-for="ID_Estudiante" type="number" class="form-control" placeholder="ID del Estudiante" required>
+                            <select asp-for="ID_Estudiante" class="form-select" asp-items="ViewBag.ID_Estudiante" required>
+                                <option value="">-- Seleccionar Estudiante --</option>
+                            </select>
                             <span asp-validation-for="ID_Estudiante" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label asp-for="ID_DocenteEncargado" class="form-label">Docente Encargado</label>
-                            @* Idealmente, usar: <select asp-for="ID_DocenteEncargado" class="form-select" asp-items="ViewBag.Docentes"></select> *@
-                            <input asp-for="ID_DocenteEncargado" type="number" class="form-control" placeholder="ID del Docente" required>
+                            <select asp-for="ID_DocenteEncargado" class="form-select" asp-items="ViewBag.ID_DocenteEncargado" required>
+                                <option value="">-- Seleccionar Docente --</option>
+                            </select>
                             <span asp-validation-for="ID_DocenteEncargado" class="text-danger small"></span>
                         </div>
                     </div>
@@ -49,14 +51,15 @@
 
                     <div class="row">
                         <div class="col-md-6 mb-3">
-                            <label asp-for="IMC" class="form-label">IMC (Valor)</label>
-                            <input asp-for="IMC" class="form-control" placeholder="Ej: 22.5" required>
-                            <span asp-validation-for="IMC" class="text-danger small"></span>
+                            <label asp-for="Estatura_cm" class="form-label">Estatura (cm)</label>
+                            <input asp-for="Estatura_cm" type="number" step="0.01" class="form-control" placeholder="Ej: 175.5" required>
+                            <span asp-validation-for="Estatura_cm" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label asp-for="ID_CategoriaIMC" class="form-label">Categoría IMC</label>
-                            @* Idealmente, usar: <select asp-for="ID_CategoriaIMC" class="form-select" asp-items="ViewBag.CategoriasIMC"></select> *@
-                            <input asp-for="ID_CategoriaIMC" type="number" class="form-control" placeholder="ID de la Categoría" required>
+                            <select asp-for="ID_CategoriaIMC" class="form-select" asp-items="ViewBag.ID_CategoriaIMC" required>
+                                <option value="">-- Seleccionar Categoría --</option>
+                            </select>
                             <span asp-validation-for="ID_CategoriaIMC" class="text-danger small"></span>
                         </div>
                     </div>

@@ -15,6 +15,6 @@ namespace SistemaIMC.Models
 
         // Propiedad de navegación
         [ForeignKey("ID_Establecimiento")]
-        public T_Establecimiento Establecimiento { get; set; }
+        public T_Establecimiento? Establecimiento { get; set; }
     }
 }

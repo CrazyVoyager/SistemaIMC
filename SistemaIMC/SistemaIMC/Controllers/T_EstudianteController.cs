@@ -47,7 +47,7 @@ namespace SistemaIMC.Controllers
         public async Task<IActionResult> Create()
         {
             // Cargar Establecimientos
-    ViewBag.ID_Establecimiento = new SelectList(
+        ViewBag.ID_Establecimiento = new SelectList(
         await _context.T_Establecimientos.OrderBy(e => e.NombreEstablecimiento).ToListAsync(),
         "ID_Establecimiento",
         "NombreEstablecimiento"

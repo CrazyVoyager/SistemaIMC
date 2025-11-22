@@ -56,18 +56,36 @@ namespace SistemaIMC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ID_Establecimiento,NombreEstablecimiento, Direccion, ID_Comuna, EstadoRegistro")] T_Establecimiento t_Establecimiento)
         {
+            // 1. Validación del Modelo (Datos del formulario)
             if (ModelState.IsValid)
             {
-                _context.Add(t_Establecimiento);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    _context.Add(t_Establecimiento);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException dbEx)
+                {
+                    // 2. Captura errores específicos de Base de Datos (ej: claves duplicadas)
+                    // Opcional: Loguear dbEx
+                    ModelState.AddModelError("", "No se pudieron guardar los cambios. Intente nuevamente o contacte al administrador si el problema persiste.");
+                }
+                catch (Exception ex)
+                {
+                    // 3. Captura cualquier otro error general
+                    // Opcional: Loguear ex
+                    ModelState.AddModelError("", $"Ocurrió un error inesperado: {ex.Message}");
+                }
             }
 
-            // ⭐ Se recarga el ViewBag si la validación falla ⭐
+            // 4. Si llegamos aquí, hubo un error (de validación o en el try-catch).
+            // Recargamos las listas desplegables (ViewBag) para que el formulario no se rompa.
             await LoadComunasViewBag(t_Establecimiento.ID_Comuna);
+
+            // Retornamos la vista con el modelo para mostrar los errores y mantener los datos que el usuario ya escribió.
             return View(t_Establecimiento);
         }
-
         // GET: T_Establecimiento/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
