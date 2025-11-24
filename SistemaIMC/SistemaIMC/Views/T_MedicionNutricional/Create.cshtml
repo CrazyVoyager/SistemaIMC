@@ -25,6 +25,10 @@
                             <span asp-validation-for="ID_Estudiante" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6 mb-3">
+                            <label class="form-label">Fecha de Nacimiento</label>
+                            <input type="date" id="FechaNacimientoDisplay" class="form-control" readonly style="background-color: #e9ecef;">
+                        </div>
+                        <div class="col-md-6 mb-3">
                             <label asp-for="ID_DocenteEncargado" class="form-label">Docente Encargado</label>
                             <select asp-for="ID_DocenteEncargado" class="form-select" asp-items="ViewBag.ID_DocenteEncargado" required>
                                 <option value="">-- Seleccionar Docente --</option>
@@ -76,6 +80,7 @@
 
 @section Scripts {
     @{
+        <script src="~/js/crearMedicion.js"></script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }

@@ -107,6 +107,25 @@ namespace SistemaIMC.Controllers
             return View(t_MedicionNutricional);
         }
 
+
+        // Nuevo Método: GET /T_MedicionNutricional/GetFechaNacimiento
+        [HttpGet]
+        public async Task<IActionResult> GetFechaNacimiento(int idEstudiante)
+        {
+            var estudiante = await _context.T_Estudiante
+                .Where(e => e.ID_Estudiante == idEstudiante)
+                .Select(e => new { e.FechaNacimiento })
+                .FirstOrDefaultAsync();
+
+            if (estudiante == null)
+            {
+                return NotFound();
+            }
+
+            // Devolvemos la fecha formateada como string (YYYY-MM-DD) para el input type="date"
+            return Json(new { fechaNacimiento = estudiante.FechaNacimiento.ToString("yyyy-MM-dd") });
+        }
+
         // POST: T_MedicionNutricional/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -138,12 +157,12 @@ namespace SistemaIMC.Controllers
 
                     // 3. LLAMAR AL STORED PROCEDURE para recalcular y actualizar
                     await _context.Database.ExecuteSqlRawAsync(
-                        "EXEC SP_ActualizarCategoriaIMC @ID_Medicion, @FechaMedicion, @FechaNacimiento, @ID_Sexo",
-                        new SqlParameter("@ID_Medicion", t_MedicionNutricional.ID_Medicion),
-                        new SqlParameter("@FechaMedicion", t_MedicionNutricional.FechaMedicion),
-                        new SqlParameter("@FechaNacimiento", estudiante.FechaNacimiento),
-                        new SqlParameter("@ID_Sexo", estudiante.ID_Sexo)
-                    );
+                    "EXEC SP_ActualizarCategoriaIMC @ID_Medicion, @FechaMedicion, @FechaNacimiento, @ID_Sexo",
+                    new SqlParameter("@ID_Medicion", t_MedicionNutricional.ID_Medicion),
+                    new SqlParameter("@FechaMedicion", t_MedicionNutricional.FechaMedicion),
+                    new SqlParameter("@FechaNacimiento", estudiante.FechaNacimiento),
+                    new SqlParameter("@ID_Sexo", estudiante.ID_Sexo)
+                );
                 }
                 catch (DbUpdateConcurrencyException)
                 {

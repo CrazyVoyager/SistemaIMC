@@ -23,9 +23,9 @@ namespace SistemaIMC.Models
         public int? ID_CategoriaIMC { get; set; }
 
         // Columnas actualizadas por el SP
-        public decimal ZScore_IMC { get; set; }
-        public int Edad_Meses_Medicion { get; set; }
-        public string Referencia_Normativa { get; set; }
+        public decimal? ZScore_IMC { get; set; }
+        public int? Edad_Meses_Medicion { get; set; }
+        public string? Referencia_Normativa { get; set; }
 
         // Otros campos
         public string? Observaciones { get; set; }
@@ -36,7 +36,7 @@ namespace SistemaIMC.Models
         // y pasarlo al SP en el controlador.
         [NotMapped]
         [Display(Name = "IMC")]
-        public decimal IMC
+        public decimal? IMC
         {
             get
             {
