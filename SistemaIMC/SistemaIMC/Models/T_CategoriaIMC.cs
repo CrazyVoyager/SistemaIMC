@@ -9,7 +9,10 @@ namespace SistemaIMC.Models
         [Key]
         public int ID_CategoriaIMC { get; set; }
         public string NombreCategoria { get; set; }
+
+        [NotMapped]
         public decimal? RangoMinIMC { get; set; }
+        [NotMapped]
         public decimal? RangoMaxIMC { get; set; }
     }
 }

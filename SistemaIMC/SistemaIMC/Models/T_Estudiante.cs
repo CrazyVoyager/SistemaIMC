@@ -16,5 +16,18 @@ namespace SistemaIMC.Models
         public int ID_Establecimiento { get; set; }
         public int ID_Curso { get; set; }
         public bool EstadoRegistro { get; set; }
+
+        // Propiedad de navegación
+        [ForeignKey("ID_Curso")]
+        public T_Curso? Curso { get; set; }
+
+        // Propiedad de navegación
+        [ForeignKey("ID_Establecimiento")]
+        public T_Establecimiento? Establecimiento { get; set; }
+
+
+        // Propiedad de navegación
+        [ForeignKey("ID_Sexo")]
+        public T_Sexo? Sexo { get; set; }
     }
 }

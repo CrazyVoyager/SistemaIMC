@@ -1,49 +1,59 @@
-﻿// Archivo: wwwroot/js/nutricion.js
+﻿// Archivo: wwwroot/js/createEstudiantes.js
 
 document.addEventListener("DOMContentLoaded", function () {
 
-    // Referencias a los elementos del DOM
-    const selectEstudiante = document.getElementById("ID_Estudiante");
-    const fechaNacimientoInput = document.getElementById("FechaNacimientoDisplay");
+    const selectEstablecimiento = document.getElementById("ddlEstablecimiento");
+    const selectCurso = document.getElementById("ddlCurso");
 
-    // Ruta al controlador para obtener la fecha de nacimiento
-    // Se asume que el controlador es T_MedicionNutricionalController.
-    const URL_API = "/T_MedicionNutricional/GetFechaNacimiento";
+    // Verificar que los elementos existan
+    if (!selectEstablecimiento || !selectCurso) {
+        console.warn("Elementos ddlEstablecimiento o ddlCurso no encontrados. Saliendo de la lógica JS.");
+        return;
+    }
 
-    selectEstudiante.addEventListener("change", async function () {
+    const URL_API_CURSOS = "/T_Estudiante/GetCursosByEstablecimiento";
 
-        const idEstudiante = this.value;
+    function resetCursoDropdown() {
+        selectCurso.innerHTML = '<option value="">Seleccionar Curso</option>';
+        selectCurso.disabled = true;
+    }
 
-        // 1. Limpiar el campo de fecha de nacimiento si no hay selección válida
-        fechaNacimientoInput.value = '';
-        if (!idEstudiante) return;
+    //resetCursoDropdown();
+
+    selectEstablecimiento.addEventListener("change", async function () {
+        const idEstablecimiento = this.value;
+
+        resetCursoDropdown();
+
+        if (!idEstablecimiento) return;
 
         try {
-            // 2. Hacemos el Fetch llamando a la acción del controlador
-            const response = await fetch(`${URL_API}?idEstudiante=${idEstudiante}`);
+            const response = await fetch(`${URL_API_CURSOS}?idEstablecimiento=${idEstablecimiento}`);
 
-            // Verificar si la respuesta de red fue correcta
             if (!response.ok) {
-                throw new Error(`Error en la red: ${response.status}`);
+                throw new Error(`Error al obtener los cursos. Código: ${response.status}`);
             }
 
-            // 3. Convertimos la respuesta a JSON
-            // Se espera un objeto con la propiedad 'fechaNacimiento' (e.g., { fechaNacimiento: "YYYY-MM-DD" })
-            const data = await response.json();
+            const cursos = await response.json();
 
-            // 4. Mostramos la fecha en el campo de solo lectura
-            if (data && data.fechaNacimiento) {
-                // Asignar el valor devuelto (formato "YYYY-MM-DD") al input type="date"
-                fechaNacimientoInput.value = data.fechaNacimiento;
+            if (cursos && cursos.length > 0) {
+                selectCurso.innerHTML = ''; // Limpiar totalmente
+                cursos.forEach(curso => {
+                    const option = document.createElement('option');
+                    option.value = curso.id;
+
+                    option.textContent = curso.name;
+
+                    selectCurso.appendChild(option);
+                });
+                selectCurso.disabled = false;
             } else {
-                fechaNacimientoInput.value = 'No disponible';
+                selectCurso.innerHTML = '<option value="">No hay cursos disponibles</option>';
             }
 
         } catch (error) {
-            console.error("Hubo un problema al cargar la fecha de nacimiento:", error);
-            fechaNacimientoInput.value = 'Error de carga';
-            // Opcional: Mostrar un mensaje de alerta al usuario
-            // alert("No se pudo cargar la fecha de nacimiento. Intente nuevamente.");
+            console.error("Hubo un problema al cargar los cursos:", error);
+            selectCurso.innerHTML = '<option value="">Error de carga</option>';
         }
     });
 });

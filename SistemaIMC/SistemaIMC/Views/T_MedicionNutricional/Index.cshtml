@@ -28,13 +28,13 @@
                         <thead class="table-light">
                             <tr>
                                 <th>ID</th>
-                                <th>ID Estudiante</th>
+                                <th>Nombre del Estudiante</th>
                                 <th>Fecha Medición</th>
                                 <th>Peso (kg)</th>
                                 <th>Estatura (cm)</th>
                                 <th>IMC</th>
-                                <th>ID Categoría</th>
-                                <th>ID Docente</th>
+                                <th>Categoría</th>
+                                <th>Docente</th>
                                 <th>Fecha Registro</th>
                                 <th>Acciones</th>
                             </tr>
@@ -44,13 +44,13 @@
                             {
                                 <tr>
                                     <td>@medicion.ID_Medicion</td>
-                                    <td>@medicion.ID_Estudiante</td>
+                                    <td>@medicion.Estudiante?.NombreCompleto</td>
                                     <td>@medicion.FechaMedicion.ToString("dd-MM-yyyy")</td>
                                     <td>@medicion.Peso_kg</td>
                                     <td>@medicion.Estatura_cm</td>
                                     <td>@medicion.IMC</td>
-                                    <td>@medicion.ID_CategoriaIMC</td>
-                                    <td>@medicion.ID_DocenteEncargado</td>
+                                    <td>@medicion.CategoriaIMC?.NombreCategoria</td>
+                                    <td>@medicion.DocenteEncargado?.Nombre</td>
                                     <td>@medicion.FechaRegistro.ToString()</td>
                                     <td>
                                         <div class="btn-group" role="group">

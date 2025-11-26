@@ -50,5 +50,18 @@ namespace SistemaIMC.Models
                 return 0.0m; // Evitar división por cero
             }
         }
+
+        // Propiedad de navegación
+        [ForeignKey("ID_Estudiante")]
+        public T_Estudiante? Estudiante { get; set; }
+
+        // Propiedad de navegación
+        [ForeignKey("ID_DocenteEncargado")]
+        public T_Usuario? DocenteEncargado { get; set; } 
+
+        // Propiedad de navegación
+        [ForeignKey("ID_CategoriaIMC")]
+        public T_CategoriaIMC? CategoriaIMC { get; set; } 
+
     }
 }

@@ -22,7 +22,7 @@ namespace SistemaIMC.Controllers
         // GET: T_Curso
         public async Task<IActionResult> Index()
         {
-            var curso = await _context.T_Cursos
+            var curso = await _context.T_Curso
                                 .Include(c => c.Establecimiento)
                                 .ToListAsync();
 
@@ -37,7 +37,7 @@ namespace SistemaIMC.Controllers
                 return NotFound();
             }
 
-            var t_Curso = await _context.T_Cursos
+            var t_Curso = await _context.T_Curso
                 .FirstOrDefaultAsync(m => m.ID_Curso == id);
             if (t_Curso == null)
             {
@@ -80,7 +80,7 @@ namespace SistemaIMC.Controllers
                 return NotFound();
             }
 
-            var t_Curso = await _context.T_Cursos.FindAsync(id);
+            var t_Curso = await _context.T_Curso.FindAsync(id);
             if (t_Curso == null)
             {
                 return NotFound();
@@ -133,7 +133,7 @@ namespace SistemaIMC.Controllers
                 return NotFound();
             }
 
-            var t_Curso = await _context.T_Cursos
+            var t_Curso = await _context.T_Curso
                 .FirstOrDefaultAsync(m => m.ID_Curso == id);
             if (t_Curso == null)
             {
@@ -148,10 +148,10 @@ namespace SistemaIMC.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var t_Curso = await _context.T_Cursos.FindAsync(id);
+            var t_Curso = await _context.T_Curso.FindAsync(id);
             if (t_Curso != null)
             {
-                _context.T_Cursos.Remove(t_Curso);
+                _context.T_Curso.Remove(t_Curso);
             }
 
             await _context.SaveChangesAsync();
@@ -170,7 +170,7 @@ namespace SistemaIMC.Controllers
         }
         private bool T_CursoExists(int id)
         {
-            return _context.T_Cursos.Any(e => e.ID_Curso == id);
+            return _context.T_Curso.Any(e => e.ID_Curso == id);
         }
     }
 }

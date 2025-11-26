@@ -22,7 +22,13 @@ namespace SistemaIMC.Controllers
         // GET: T_Estudiante
         public async Task<IActionResult> Index()
         {
-            return View(await _context.T_Estudiante.ToListAsync());
+            var estudiantesConRelaciones = await _context.T_Estudiante
+                    .Include(e => e.Establecimiento) // Incluir la información de Establecimiento
+                    .Include(e => e.Curso)           // Incluir la información de Curso
+                    .Include(e => e.Sexo)            // Incluir la información de Sexo
+                    .ToListAsync();
+
+            return View(estudiantesConRelaciones);
         }
 
         // GET: T_Estudiante/Details/5
@@ -55,7 +61,7 @@ namespace SistemaIMC.Controllers
 
             // Cargar Cursos
             ViewBag.ID_Curso = new SelectList(
-                await _context.T_Cursos.OrderBy(c => c.NombreCurso).ToListAsync(),
+                await _context.T_Curso.OrderBy(c => c.NombreCurso).ToListAsync(),
                 "ID_Curso",
                 "NombreCurso"
             );
@@ -88,11 +94,45 @@ namespace SistemaIMC.Controllers
                 return NotFound();
             }
 
-            var t_Estudiante = await _context.T_Estudiante.FindAsync(id);
+            var t_Estudiante = await _context.T_Estudiante
+                .Include(e => e.Establecimiento)
+                .Include(e => e.Curso)
+                .Include(e => e.Sexo)
+                .FirstOrDefaultAsync(m => m.ID_Estudiante == id);
+
             if (t_Estudiante == null)
             {
                 return NotFound();
             }
+
+            // Cargar Establecimientos (ya funcionaba, pero por completitud)
+            ViewBag.ID_Establecimiento = new SelectList(
+                await _context.T_Establecimientos.ToListAsync(),
+                "ID_Establecimiento",
+                "NombreEstablecimiento",
+                t_Estudiante.ID_Establecimiento
+            );
+
+            var cursosActuales = await _context.T_Curso
+                .Where(c => c.ID_Establecimiento == t_Estudiante.ID_Establecimiento)
+                .OrderBy(c => c.NombreCurso)
+                .ToListAsync();
+
+            // Luego, pasar esa lista filtrada a la vista, con el ID del curso del estudiante seleccionado.
+            ViewBag.ID_Curso = new SelectList(
+                cursosActuales,
+                "ID_Curso",
+                "NombreCurso",
+                t_Estudiante.ID_Curso
+            );
+
+            ViewBag.ID_Sexo = new SelectList(
+                await _context.T_Sexo.ToListAsync(),
+                "ID_Sexo",
+                "Sexo",
+                t_Estudiante.ID_Sexo
+            );
+
             return View(t_Estudiante);
         }
 
@@ -172,7 +212,7 @@ namespace SistemaIMC.Controllers
         [HttpGet]
         public async Task<JsonResult> GetCursosByEstablecimiento(int idEstablecimiento)
         {
-            var cursos = await _context.T_Cursos
+            var cursos = await _context.T_Curso
                 .Where(c => c.ID_Establecimiento == idEstablecimiento)
                 .OrderBy(c => c.NombreCurso)
                 .Select(c => new

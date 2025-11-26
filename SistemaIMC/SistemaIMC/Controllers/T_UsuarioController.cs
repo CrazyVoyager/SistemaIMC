@@ -119,6 +119,20 @@ namespace SistemaIMC.Controllers
             {
                 try
                 {
+
+                    // 1. Buscamos la entidad original EN EL TRACKING, o la cargamos sin tracking para ver la contraseña
+                    var originalUser = await _context.T_Usuario.AsNoTracking().FirstOrDefaultAsync(u => u.ID_Usuario == id);
+
+                    if (originalUser == null)
+                    {
+                        // Debería ser muy raro, pero manejamos el caso
+                        return NotFound();
+                    }
+
+                    // 2. Asignamos la Contraseña original del usuario al objeto del formulario (que tiene NULL)
+                    t_Usuario.Contrasena = originalUser.Contrasena;
+
+
                     _context.Update(t_Usuario);
                     await _context.SaveChangesAsync();
                 }
@@ -135,6 +149,8 @@ namespace SistemaIMC.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["ID_Rol"] = new SelectList(_context.T_Rol.OrderBy(r => r.NombreRol).ToList(), "ID_Rol", "NombreRol", t_Usuario.ID_Rol);
+
             return View(t_Usuario);
         }
 

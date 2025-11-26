@@ -176,8 +176,18 @@ namespace SistemaIMC.Controllers
             return View(t_MedicionNutricional);
         }
 
-        // ... (Index, Details, Delete, T_MedicionNutricionalExists se mantienen igual)
-        public async Task<IActionResult> Index() { return View(await _context.T_MedicionNutricional.ToListAsync()); }
+        // GET: T_MedicionNutricional
+        public async Task<IActionResult> Index()
+        {
+            // AÑADIR .Include() para cargar las propiedades de navegación
+            var mediciones = await _context.T_MedicionNutricional
+                .Include(m => m.Estudiante)           // Carga los datos de T_Estudiante
+                .Include(m => m.CategoriaIMC)         // Carga los datos de T_CategoriaIMC
+                .Include(m => m.DocenteEncargado)     // Carga los datos de T_Usuario (Docente)
+                .ToListAsync();
+
+            return View(mediciones);
+        }
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();

@@ -31,8 +31,8 @@
                                 <th>Nombre Completo</th>
                                 <th>Fecha Nacimiento</th>
                                 <th>Sexo</th>
-                                <th>ID Establecimiento</th>
-                                <th>ID Curso</th>
+                                <th>Establecimiento</th>
+                                <th>Curso</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
@@ -44,9 +44,9 @@
                                     <td>@estudiante.ID_Estudiante</td>
                                     <td>@estudiante.NombreCompleto</td>
                                     <td>@estudiante.FechaNacimiento.ToString("dd-MM-yyyy")</td>
-                                    <td>@estudiante.ID_Sexo</td>
-                                    <td>@estudiante.ID_Establecimiento</td>
-                                    <td>@estudiante.ID_Curso</td>
+                                    <td>@(estudiante.Sexo?.Sexo ?? "N/A")</td>
+                                    <td>@(estudiante.Establecimiento?.NombreEstablecimiento ?? "N/A")</td>
+                                    <td>@(estudiante.Curso?.NombreCurso ?? "N/A")</td>
                                     <td>
                                         @if (estudiante.EstadoRegistro)
                                         {

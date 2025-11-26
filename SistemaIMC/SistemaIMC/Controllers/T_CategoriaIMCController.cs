@@ -54,7 +54,7 @@ namespace SistemaIMC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("ID_CategoriaIMC,NombreCategoria,RangoMinIMC,RangoMaxIMC")] T_CategoriaIMC t_CategoriaIMC)
+        public async Task<IActionResult> Create([Bind("ID_CategoriaIMC,NombreCategoria")] T_CategoriaIMC t_CategoriaIMC)
         {
             if (ModelState.IsValid)
             {
@@ -86,7 +86,7 @@ namespace SistemaIMC.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("ID_CategoriaIMC,NombreCategoria,RangoMinIMC,RangoMaxIMC")] T_CategoriaIMC t_CategoriaIMC)
+        public async Task<IActionResult> Edit(int id, [Bind("ID_CategoriaIMC,NombreCategoria")] T_CategoriaIMC t_CategoriaIMC)
         {
             if (id != t_CategoriaIMC.ID_CategoriaIMC)
             {
