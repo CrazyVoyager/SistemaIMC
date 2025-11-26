@@ -29,7 +29,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre del Curso</th>
-                                <th>ID Establecimiento</th>
+                                <th>Establecimiento</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -39,7 +39,7 @@
                                 <tr>
                                     <td>@curso.ID_Curso</td>
                                     <td>@curso.NombreCurso</td>
-                                    <td>@curso.ID_Establecimiento</td>
+                                    <td>@(curso.Establecimiento?.NombreEstablecimiento)</td>
                                     <td>
                                         <div class="btn-group" role="group">
                                             <a asp-action="Edit" asp-route-id="@curso.ID_Curso"

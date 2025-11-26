@@ -22,7 +22,11 @@ namespace SistemaIMC.Controllers
         // GET: T_Usuario
         public async Task<IActionResult> Index()
         {
-            return View(await _context.T_Usuario.ToListAsync());
+            var usuario = await _context.T_Usuario
+                          .Include(c => c.Rol)
+                          .ToListAsync();
+
+            return View(usuario);
         }
 
         // GET: T_Usuario/Details/5
@@ -76,14 +80,26 @@ namespace SistemaIMC.Controllers
         {
             if (id == null)
             {
+                // Retorna error 404 si no hay ID. 
                 return NotFound();
             }
 
+            // 1. BUSCA EL USUARIO PARA OBTENER SUS DATOS
             var t_Usuario = await _context.T_Usuario.FindAsync(id);
+
             if (t_Usuario == null)
             {
                 return NotFound();
             }
+
+            // 2. CARGA LA LISTA DE ROLES Y SELECCIONA EL ROL ACTUAL DEL USUARIO
+            ViewData["ID_Rol"] = new SelectList(
+                _context.T_Rol.OrderBy(r => r.NombreRol).ToList(), // Lista de datos
+                "ID_Rol",         
+                "NombreRol",      
+                t_Usuario.ID_Rol  
+            );
+
             return View(t_Usuario);
         }
 
@@ -161,3 +177,5 @@ namespace SistemaIMC.Controllers
         }
     }
 }
+
+

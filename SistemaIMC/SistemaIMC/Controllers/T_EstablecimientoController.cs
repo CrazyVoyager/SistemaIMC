@@ -22,7 +22,11 @@ namespace SistemaIMC.Controllers
         // GET: T_Establecimiento
         public async Task<IActionResult> Index()
         {
-            return View(await _context.T_Establecimientos.ToListAsync());
+            var establecimiento = await _context.T_Establecimientos
+                                .Include(c => c.Comuna)
+                                .ToListAsync();
+
+            return View(establecimiento);
         }
 
         // GET: T_Establecimiento/Details/5

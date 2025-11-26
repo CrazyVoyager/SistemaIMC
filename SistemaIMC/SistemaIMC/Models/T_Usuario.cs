@@ -11,8 +11,12 @@ namespace SistemaIMC.Models
         public string RUT { get; set; }
         public string Nombre { get; set; }
         public string CorreoElectronico { get; set; }
-        public string Contrasena { get; set; }
+        public string? Contrasena { get; set; }
         public int ID_Rol { get; set; } 
         public bool EstadoRegistro { get; set; }
+
+        // Propiedad de navegación
+        [ForeignKey("ID_Rol")]
+        public T_Rol? Rol { get; set; }
     }
 }

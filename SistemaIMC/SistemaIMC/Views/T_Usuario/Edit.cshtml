@@ -38,12 +38,16 @@
                             <input asp-for="CorreoElectronico" type="email" class="form-control" placeholder="usuario@ejemplo.com" required>
                             <span asp-validation-for="CorreoElectronico" class="text-danger small"></span>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="ID_Rol" class="form-label">ID de Rol</label>
-                            @* En una aplicación real, esto debería ser un DropDownList cargado desde ViewBag/ViewData *@
-                            <input asp-for="ID_Rol" type="number" class="form-control" required>
-                            <span asp-validation-for="ID_Rol" class="text-danger small"></span>
-                        </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ID_Rol" class="form-label">Rol de Usuario</label>
+
+                                @* Usamos asp-items para llenar la lista automáticamente desde el ViewBag *@
+                                <select asp-for="ID_Rol" class="form-select" asp-items="ViewBag.ID_Rol" required>
+                                    <option value="">Seleccione un Rol</option>
+                                </select>
+
+                                <span asp-validation-for="ID_Rol" class="text-danger small"></span>
+                            </div>
                     </div>
 
                     <div class="row">

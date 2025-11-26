@@ -14,7 +14,7 @@ namespace SistemaIMC.Models
         public bool EstadoRegistro { get; set; }
 
         // Propiedad de navegación
-        [ForeignKey("ID_Establecimiento")]
-        public T_Establecimiento? Establecimiento { get; set; }
+        [ForeignKey("ID_Comuna")]
+        public T_Comuna? Comuna { get; set; }
     }
 }

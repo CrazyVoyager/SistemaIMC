@@ -29,7 +29,7 @@
                             <tr>
                                 <th>ID</th>
                                 <th>Nombre de la Comuna</th>
-                                <th>ID Región</th>
+                                <th>Región</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
@@ -39,7 +39,7 @@
                                 <tr>
                                     <td>@comuna.ID_Comuna</td>
                                     <td>@comuna.NombreComuna</td>
-                                    <td>@comuna.ID_Region</td>
+                                    <td>@(comuna.Region?.NombreRegion)</td>
                                     <td>
                                         <div class="btn-group" role="group">
                                             <a asp-action="Edit" asp-route-id="@comuna.ID_Comuna"

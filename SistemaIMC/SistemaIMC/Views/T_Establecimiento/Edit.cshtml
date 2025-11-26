@@ -32,8 +32,10 @@
 
                     <div class="mb-3">
                         <label asp-for="ID_Comuna" class="form-label">Comuna</label>
-                        @* Idealmente, usar: <select asp-for="ID_Comuna" class="form-select" asp-items="ViewBag.Comunas"></select> *@
-                        <input asp-for="ID_Comuna" type="number" class="form-control" placeholder="ID de la Comuna" required>
+                        @* ⭐ CAMBIO: Se usa el tag helper <select> y ViewBag.ID_Comuna ⭐ *@
+                        <select asp-for="ID_Comuna" class="form-select" asp-items="ViewBag.ID_Comuna" required>
+                            <option value="">Seleccionar Comuna</option>
+                        </select>
                         <span asp-validation-for="ID_Comuna" class="text-danger small"></span>
                     </div>
 

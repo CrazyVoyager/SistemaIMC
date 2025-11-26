@@ -31,7 +31,7 @@
                                 <th>RUT</th>
                                 <th>Nombre</th>
                                 <th>Correo Electrónico</th>
-                                <th>Rol ID</th>
+                                <th>Rol</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
@@ -44,7 +44,7 @@
                                     <td>@usuario.RUT</td>
                                     <td>@usuario.Nombre</td>
                                     <td>@usuario.CorreoElectronico</td>
-                                    <td>@usuario.ID_Rol</td>
+                                    <td>@usuario.Rol?.NombreRol</td>
                                     <td>
                                         @if (usuario.EstadoRegistro)
                                         {

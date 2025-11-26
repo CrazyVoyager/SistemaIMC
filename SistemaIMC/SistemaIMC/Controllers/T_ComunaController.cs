@@ -22,7 +22,11 @@ namespace SistemaIMC.Controllers
         // GET: T_Comuna
         public async Task<IActionResult> Index()
         {
-            return View(await _context.T_Comunas.ToListAsync());
+            var comunas = await _context.T_Comunas
+                    .Include(c => c.Region)
+                    .ToListAsync();
+
+            return View(comunas);
         }
 
         // GET: T_Comuna/Details/5
@@ -66,6 +70,8 @@ namespace SistemaIMC.Controllers
             await LoadRegionesViewBag(t_Comuna.ID_Region);
             return View(t_Comuna);
         }
+
+
 
         // GET: T_Comuna/Edit/5
         public async Task<IActionResult> Edit(int? id)

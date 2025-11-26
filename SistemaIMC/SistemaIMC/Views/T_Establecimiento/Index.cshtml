@@ -30,7 +30,7 @@
                                 <th>ID</th>
                                 <th>Nombre del Establecimiento</th>
                                 <th>Direccion</th>
-                                <th>ID Comuna</th>
+                                <th>Comuna</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
@@ -42,7 +42,7 @@
                                     <td>@establecimiento.ID_Establecimiento</td>
                                     <td>@establecimiento.NombreEstablecimiento</td>
                                     <td>@establecimiento.Direccion</td>
-                                    <td>@establecimiento.ID_Comuna</td>
+                                    <td>@establecimiento.Comuna?.NombreComuna</td>
                                     <td>
                                         @if (establecimiento.EstadoRegistro)
                                         {

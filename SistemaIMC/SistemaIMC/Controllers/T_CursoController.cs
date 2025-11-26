@@ -22,7 +22,11 @@ namespace SistemaIMC.Controllers
         // GET: T_Curso
         public async Task<IActionResult> Index()
         {
-            return View(await _context.T_Cursos.ToListAsync());
+            var curso = await _context.T_Cursos
+                                .Include(c => c.Establecimiento)
+                                .ToListAsync();
+
+            return View(curso);
         }
 
         // GET: T_Curso/Details/5
