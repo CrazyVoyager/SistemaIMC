@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaIMC.Data;
 using SistemaIMC.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SistemaIMC.Controllers
 {
+    // Permite entrar a Admin, Director y Profesor (Index y Details visibles para todos)
+    [Authorize(Roles = "Administrador del Sistema, Supervisor / Director de la Entidad, Profesor / Encargado de Mediciones")]
     public class T_EstudianteController : Controller
     {
         private readonly TdDbContext _context;
@@ -19,62 +22,36 @@ namespace SistemaIMC.Controllers
             _context = context;
         }
 
-        // GET: T_Estudiante
         public async Task<IActionResult> Index()
         {
             var estudiantesConRelaciones = await _context.T_Estudiante
-                    .Include(e => e.Establecimiento) // Incluir la información de Establecimiento
-                    .Include(e => e.Curso)           // Incluir la información de Curso
-                    .Include(e => e.Sexo)            // Incluir la información de Sexo
+                    .Include(e => e.Establecimiento)
+                    .Include(e => e.Curso)
+                    .Include(e => e.Sexo)
                     .ToListAsync();
-
             return View(estudiantesConRelaciones);
         }
 
-        // GET: T_Estudiante/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var t_Estudiante = await _context.T_Estudiante
-                .FirstOrDefaultAsync(m => m.ID_Estudiante == id);
-            if (t_Estudiante == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
+            var t_Estudiante = await _context.T_Estudiante.FirstOrDefaultAsync(m => m.ID_Estudiante == id);
+            if (t_Estudiante == null) return NotFound();
             return View(t_Estudiante);
         }
 
-        // GET: T_Estudiante/Create
+        // CREATE - Solo Admin y Profesor
+        [Authorize(Roles = "Administrador del Sistema, Profesor / Encargado de Mediciones")]
         public async Task<IActionResult> Create()
         {
-            // Cargar Establecimientos
-        ViewBag.ID_Establecimiento = new SelectList(
-        await _context.T_Establecimientos.OrderBy(e => e.NombreEstablecimiento).ToListAsync(),
-        "ID_Establecimiento",
-        "NombreEstablecimiento"
-    );
-
-            // Cargar Cursos
-            ViewBag.ID_Curso = new SelectList(
-                await _context.T_Curso.OrderBy(c => c.NombreCurso).ToListAsync(),
-                "ID_Curso",
-                "NombreCurso"
-            );
-
-
+            ViewBag.ID_Establecimiento = new SelectList(await _context.T_Establecimientos.OrderBy(e => e.NombreEstablecimiento).ToListAsync(), "ID_Establecimiento", "NombreEstablecimiento");
+            ViewBag.ID_Curso = new SelectList(await _context.T_Curso.OrderBy(c => c.NombreCurso).ToListAsync(), "ID_Curso", "NombreCurso");
             return View();
         }
 
-        // POST: T_Estudiante/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador del Sistema, Profesor / Encargado de Mediciones")]
         public async Task<IActionResult> Create([Bind("ID_Estudiante,RUT,NombreCompleto,FechaNacimiento,ID_Sexo,ID_Establecimiento,ID_Curso,EstadoRegistro")] T_Estudiante t_Estudiante)
         {
             if (ModelState.IsValid)
@@ -86,68 +63,27 @@ namespace SistemaIMC.Controllers
             return View(t_Estudiante);
         }
 
-        // GET: T_Estudiante/Edit/5
+        // EDIT - Solo Admin y Profesor
+        [Authorize(Roles = "Administrador del Sistema, Profesor / Encargado de Mediciones")]
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
+            var t_Estudiante = await _context.T_Estudiante.Include(e => e.Establecimiento).Include(e => e.Curso).Include(e => e.Sexo).FirstOrDefaultAsync(m => m.ID_Estudiante == id);
+            if (t_Estudiante == null) return NotFound();
 
-            var t_Estudiante = await _context.T_Estudiante
-                .Include(e => e.Establecimiento)
-                .Include(e => e.Curso)
-                .Include(e => e.Sexo)
-                .FirstOrDefaultAsync(m => m.ID_Estudiante == id);
-
-            if (t_Estudiante == null)
-            {
-                return NotFound();
-            }
-
-            // Cargar Establecimientos (ya funcionaba, pero por completitud)
-            ViewBag.ID_Establecimiento = new SelectList(
-                await _context.T_Establecimientos.ToListAsync(),
-                "ID_Establecimiento",
-                "NombreEstablecimiento",
-                t_Estudiante.ID_Establecimiento
-            );
-
-            var cursosActuales = await _context.T_Curso
-                .Where(c => c.ID_Establecimiento == t_Estudiante.ID_Establecimiento)
-                .OrderBy(c => c.NombreCurso)
-                .ToListAsync();
-
-            // Luego, pasar esa lista filtrada a la vista, con el ID del curso del estudiante seleccionado.
-            ViewBag.ID_Curso = new SelectList(
-                cursosActuales,
-                "ID_Curso",
-                "NombreCurso",
-                t_Estudiante.ID_Curso
-            );
-
-            ViewBag.ID_Sexo = new SelectList(
-                await _context.T_Sexo.ToListAsync(),
-                "ID_Sexo",
-                "Sexo",
-                t_Estudiante.ID_Sexo
-            );
-
+            ViewBag.ID_Establecimiento = new SelectList(await _context.T_Establecimientos.ToListAsync(), "ID_Establecimiento", "NombreEstablecimiento", t_Estudiante.ID_Establecimiento);
+            var cursosActuales = await _context.T_Curso.Where(c => c.ID_Establecimiento == t_Estudiante.ID_Establecimiento).OrderBy(c => c.NombreCurso).ToListAsync();
+            ViewBag.ID_Curso = new SelectList(cursosActuales, "ID_Curso", "NombreCurso", t_Estudiante.ID_Curso);
+            ViewBag.ID_Sexo = new SelectList(await _context.T_Sexo.ToListAsync(), "ID_Sexo", "Sexo", t_Estudiante.ID_Sexo);
             return View(t_Estudiante);
         }
 
-        // POST: T_Estudiante/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador del Sistema, Profesor / Encargado de Mediciones")]
         public async Task<IActionResult> Edit(int id, [Bind("ID_Estudiante,RUT,NombreCompleto,FechaNacimiento,ID_Sexo,ID_Establecimiento,ID_Curso,EstadoRegistro")] T_Estudiante t_Estudiante)
         {
-            if (id != t_Estudiante.ID_Estudiante)
-            {
-                return NotFound();
-            }
-
+            if (id != t_Estudiante.ID_Estudiante) return NotFound();
             if (ModelState.IsValid)
             {
                 try
@@ -157,73 +93,41 @@ namespace SistemaIMC.Controllers
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!T_EstudianteExists(t_Estudiante.ID_Estudiante))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!T_EstudianteExists(t_Estudiante.ID_Estudiante)) return NotFound(); else throw;
                 }
                 return RedirectToAction(nameof(Index));
             }
             return View(t_Estudiante);
         }
 
-        // GET: T_Estudiante/Delete/5
+        // DELETE - Solo Admin y Profesor
+        [Authorize(Roles = "Administrador del Sistema, Profesor / Encargado de Mediciones")]
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var t_Estudiante = await _context.T_Estudiante
-                .FirstOrDefaultAsync(m => m.ID_Estudiante == id);
-            if (t_Estudiante == null)
-            {
-                return NotFound();
-            }
-
+            if (id == null) return NotFound();
+            var t_Estudiante = await _context.T_Estudiante.FirstOrDefaultAsync(m => m.ID_Estudiante == id);
+            if (t_Estudiante == null) return NotFound();
             return View(t_Estudiante);
         }
 
-        // POST: T_Estudiante/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Administrador del Sistema, Profesor / Encargado de Mediciones")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var t_Estudiante = await _context.T_Estudiante.FindAsync(id);
-            if (t_Estudiante != null)
-            {
-                _context.T_Estudiante.Remove(t_Estudiante);
-            }
-
+            if (t_Estudiante != null) _context.T_Estudiante.Remove(t_Estudiante);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool T_EstudianteExists(int id)
-        {
-            return _context.T_Estudiante.Any(e => e.ID_Estudiante == id);
-        }
+        private bool T_EstudianteExists(int id) => _context.T_Estudiante.Any(e => e.ID_Estudiante == id);
 
         [HttpGet]
         public async Task<JsonResult> GetCursosByEstablecimiento(int idEstablecimiento)
         {
-            var cursos = await _context.T_Curso
-                .Where(c => c.ID_Establecimiento == idEstablecimiento)
-                .OrderBy(c => c.NombreCurso)
-                .Select(c => new
-                {
-                    id = c.ID_Curso,
-                    name = c.NombreCurso
-                })
-                .ToListAsync();
-
+            var cursos = await _context.T_Curso.Where(c => c.ID_Establecimiento == idEstablecimiento).OrderBy(c => c.NombreCurso).Select(c => new { id = c.ID_Curso, name = c.NombreCurso }).ToListAsync();
             return Json(cursos);
         }
-
     }
 }

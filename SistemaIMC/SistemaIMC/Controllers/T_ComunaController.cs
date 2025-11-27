@@ -1,15 +1,18 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaIMC.Data;
 using SistemaIMC.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SistemaIMC.Controllers
 {
+
+    [Authorize(Roles = "Administrador del Sistema")]
     public class T_ComunaController : Controller
     {
         private readonly TdDbContext _context;

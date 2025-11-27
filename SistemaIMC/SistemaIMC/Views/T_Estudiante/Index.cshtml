@@ -2,18 +2,26 @@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Gestión de Estudiantes";
+
+    // Lógica de permisos para la vista:
+    // Solo Admin y Profesor pueden Crear, Editar y Eliminar.
+    bool puedeEditar = User.IsInRole("Administrador del Sistema") ||
+                       User.IsInRole("Profesor / Encargado de Mediciones");
 }
 @model List<SistemaIMC.Models.T_Estudiante>
-@{
-    ViewData["Title"] = "Gestión de Estudiantes";
-}
 
 <div class="container-fluid">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-user-graduate me-2"></i>Estudiantes</h1>
-        <a asp-action="Create" class="btn btn-primary">
-            <i class="fas fa-plus me-1"></i> Nuevo Estudiante
-        </a>
+
+        @* BOTÓN CREAR: Solo visible si tiene permisos *@
+        @if (puedeEditar)
+        {
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fas fa-plus me-1"></i> Nuevo Estudiante
+            </a>
+        }
     </div>
 
     <div class="card shadow mb-4">
@@ -59,14 +67,24 @@
                                     </td>
                                     <td>
                                         <div class="btn-group" role="group">
-                                            <a asp-action="Edit" asp-route-id="@estudiante.ID_Estudiante"
-                                               class="btn btn-warning btn-sm">
-                                                <i class="fas fa-edit"></i> Editar
+                                            @* BOTÓN DETALLES: Visible para TODOS (Incluido Director) *@
+                                            <a asp-action="Details" asp-route-id="@estudiante.ID_Estudiante"
+                                               class="btn btn-info btn-sm">
+                                                <i class="fas fa-info-circle"></i>
                                             </a>
-                                            <a asp-action="Delete" asp-route-id="@estudiante.ID_Estudiante"
-                                               class="btn btn-danger btn-sm">
-                                                <i class="fas fa-trash"></i> Eliminar
-                                            </a>
+
+                                            @* BOTONES EDICIÓN: Solo Admin y Profesor *@
+                                            @if (puedeEditar)
+                                            {
+                                                <a asp-action="Edit" asp-route-id="@estudiante.ID_Estudiante"
+                                                   class="btn btn-warning btn-sm">
+                                                    <i class="fas fa-edit"></i>
+                                                </a>
+                                                <a asp-action="Delete" asp-route-id="@estudiante.ID_Estudiante"
+                                                   class="btn btn-danger btn-sm">
+                                                    <i class="fas fa-trash"></i>
+                                                </a>
+                                            }
                                         </div>
                                     </td>
                                 </tr>
@@ -80,10 +98,18 @@
                 <div class="text-center py-4">
                     <i class="fas fa-user-graduate fa-3x text-gray-300 mb-3"></i>
                     <h5 class="text-gray-500">No hay estudiantes registrados</h5>
-                    <p class="text-gray-500">Comienza agregando un nuevo estudiante.</p>
-                    <a asp-action="Create" class="btn btn-primary">
-                        <i class="fas fa-plus me-1"></i> Crear Primer Estudiante
-                    </a>
+
+                    @if (puedeEditar)
+                    {
+                        <p class="text-gray-500">Comienza agregando un nuevo estudiante.</p>
+                        <a asp-action="Create" class="btn btn-primary">
+                            <i class="fas fa-plus me-1"></i> Crear Primer Estudiante
+                        </a>
+                    }
+                    else
+                    {
+                        <p class="text-gray-500">No hay registros disponibles para visualizar.</p>
+                    }
                 </div>
             }
         </div>

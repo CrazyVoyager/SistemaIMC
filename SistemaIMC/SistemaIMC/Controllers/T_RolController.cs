@@ -7,9 +7,13 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaIMC.Data;
 using SistemaIMC.Models;
+using Microsoft.AspNetCore.Authorization; 
+
 
 namespace SistemaIMC.Controllers
 {
+
+    [Authorize(Roles = "Administrador del Sistema")]
     public class T_RolController : Controller
     {
         private readonly TdDbContext _context;

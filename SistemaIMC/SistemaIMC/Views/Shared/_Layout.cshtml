@@ -1,4 +1,21 @@
-﻿<!DOCTYPE html>
+﻿@using System.Security.Claims
+
+@{
+    ViewData["Title"] = ViewData["Title"] ?? "SistemaIMC";
+
+    // 1. Obtener información del usuario
+    var userPrincipal = User;
+    bool isAuthenticated = userPrincipal.Identity?.IsAuthenticated ?? false;
+
+    // 2. Verificar el Rol (Usamos el rol que estableciste en T_RolController.cs)
+    bool isAdmin = userPrincipal.IsInRole("Administrador del Sistema");
+
+    // 3. Obtener el nombre de usuario y rol para la barra superior
+    string userName = userPrincipal.Identity?.Name ?? "Invitado";
+    string userRole = userPrincipal.FindFirst(ClaimTypes.Role)?.Value ?? "N/A";
+}
+
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="utf-8" />
@@ -6,7 +23,10 @@
     <title>@ViewData["Title"] - SistemaIMC</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+
     <style>
+        /* CSS Proporcionado por el Usuario */
         .navbar-brand {
             font-weight: 600;
         }
@@ -33,19 +53,18 @@
             color: #6e707e;
         }
 
-        /* 1. Aplicamos tu degradado al componente Offcanvas */
+        /* Estilo del Sidebar (Degradado azul) */
         .sidebar.offcanvas {
             background: linear-gradient(180deg, #4e73df 0%, #224abe 100%);
         }
 
-        /* 2. Estilo para el header del menú (nuevo) */
         .sidebar .offcanvas-header {
             padding-top: 1.15rem;
             padding-bottom: 1.1rem;
             border-bottom: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        /* 3. Estilo para el botón hamburguesa */
+        /* Estilos del Toggle y Links */
         #sidebarToggle {
             cursor: pointer;
             color: #6c757d;
@@ -58,7 +77,7 @@
         .sidebar .nav-link {
             color: rgba(255, 255, 255, 0.8);
             padding: 0.75rem 1rem;
-            font-weight: 500; /* Un poco más legible */
+            font-weight: 500;
         }
 
             .sidebar .nav-link:hover {
@@ -68,160 +87,159 @@
 
             .sidebar .nav-link i {
                 margin-right: 0.5rem;
-                width: 1.25em; /* Alinea los iconos */
+                width: 1.25em;
             }
 
-        /* --- NUEVO: ESTILOS PARA MENÚ DESPLEGABLE --- */
+            /* Estilos de flecha de Collapse */
+            .sidebar .nav-link[data-bs-toggle="collapse"]::after {
+                content: '\f078';
+                font-family: 'Font Awesome 6 Free';
+                font-weight: 900;
+                float: right;
+                transition: transform 0.2s ease-in-out;
+            }
 
-        /* Estilo para la flecha */
-        .sidebar .nav-link[data-bs-toggle="collapse"]::after {
-            content: '\f078'; /* Icono de flecha (chevron-down) */
-            font-family: 'Font Awesome 6 Free';
-            font-weight: 900;
-            float: right;
-            transition: transform 0.2s ease-in-out;
-        }
+            .sidebar .nav-link[data-bs-toggle="collapse"][aria-expanded="true"]::after {
+                transform: rotate(180deg);
+            }
 
-        /* Gira la flecha cuando el menú está abierto */
-        .sidebar .nav-link[data-bs-toggle="collapse"][aria-expanded="true"]::after {
-            transform: rotate(180deg);
-        }
-
-        /* Estilo para los sub-items (más indentación, menos padding) */
+        /* Estilos de submenús */
         .sidebar .collapse .nav-link {
-            padding: 0.5rem 1rem 0.5rem 2.5rem; /* 2.5rem de indentación */
+            padding: 0.5rem 1rem 0.5rem 2.5rem;
             font-size: 0.9em;
             color: rgba(255, 255, 255, 0.7);
         }
 
-        .sidebar .collapse .nav-link:hover {
-             color: #fff;
-             background-color: rgba(255, 255, 255, 0.15);
-        }
-        /* --- FIN DE ESTILOS NUEVOS --- */
-
+            .sidebar .collapse .nav-link:hover {
+                color: #fff;
+                background-color: rgba(255, 255, 255, 0.15);
+            }
     </style>
 </head>
 <body>
     <div class="container-fluid">
         <div class="row">
-            <div class="offcanvas offcanvas-start sidebar" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
 
-                <div class="offcanvas-header">
-                    <h4 class="text-white" id="sidebarOffcanvasLabel"><i class="fas fa-heartbeat me-2"></i> SistemaIMC</h4>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-                </div>
+            @if (isAuthenticated)
+            {
+                <div class="offcanvas offcanvas-start sidebar" tabindex="-1" id="sidebarOffcanvas" aria-labelledby="sidebarOffcanvasLabel">
 
-                <div class="offcanvas-body p-0">
-                    <ul class="nav flex-column">
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Home" asp-action="Index">
-                                <i class="fas fa-home"></i> Inicio
-                            </a>
-                        </li>
-
-                        <li class="nav-item px-3"><hr class="text-white-50 my-2 p-0"></li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="#nutricionMenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="nutricionMenu">
-                                <i class="fas fa-user-graduate"></i> Gestión Nutricional
-                            </a>
-                            <div class="collapse" id="nutricionMenu">
-                                <ul class="nav flex-column">
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="T_Estudiante" asp-action="Index">
-                                            Estudiantes
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="T_MedicionNutricional" asp-action="Index">
-                                            Mediciones
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="#adminMenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="adminMenu">
-                                <i class="fas fa-users-cog"></i> Administración
-                            </a>
-                            <div class="collapse" id="adminMenu">
-                                <ul class="nav flex-column">
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="T_Usuario" asp-action="Index">
-                                            Usuarios
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="T_Rol" asp-action="Index">
-                                            Roles
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-
-                        <li class="nav-item">
-                            <a class="nav-link" href="#configMenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="configMenu">
-                                <i class="fas fa-cogs"></i> Configuración
-                            </a>
-                            <div class="collapse" id="configMenu">
-                                <ul class="nav flex-column">
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="T_Establecimiento" asp-action="Index">
-                                            Establecimientos
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="T_Curso" asp-action="Index">
-                                            Cursos
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="T_Comuna" asp-action="Index">
-                                            Comunas
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="T_Region" asp-action="Index">
-                                            Regiones
-                                        </a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" asp-controller="T_CategoriaIMC" asp-action="Index">
-                                            Categorías IMC
-                                        </a>
-                                    </li>
-                                </ul>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-
-            <main id="main-content" class="col-md-12 px-md-4">
-                <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-
-                    <div class="d-flex align-items-center">
-
-                        <button id="sidebarToggle" class="btn btn-link me-2 p-0" type="button"
-                                data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas"
-                                aria-controls="sidebarOffcanvas">
-                            <i class="fas fa-bars fs-4"></i>
-                        </button>
-
-                        <h1 class="h2">@ViewData["Title"]</h1>
+                    <div class="offcanvas-header">
+                        <h4 class="text-white" id="sidebarOffcanvasLabel"><i class="fas fa-heartbeat me-2"></i> SistemaIMC</h4>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
 
+                    <div class="offcanvas-body p-0">
+                        <ul class="nav flex-column">
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Home" asp-action="Index">
+                                    <i class="fas fa-home"></i> Inicio
+                                </a>
+                            </li>
+
+                            <li class="nav-item px-3"><hr class="text-white-50 my-2 p-0"></li>
+
+                            <li class="nav-item">
+                                <a class="nav-link" href="#nutricionMenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="nutricionMenu">
+                                    <i class="fas fa-user-graduate"></i> Gestión Nutricional
+                                </a>
+                                <div class="collapse" id="nutricionMenu">
+                                    <ul class="nav flex-column">
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-controller="T_Estudiante" asp-action="Index">
+                                                Estudiantes
+                                            </a>
+                                        </li>
+                                        <li class="nav-item">
+                                            <a class="nav-link" asp-controller="T_MedicionNutricional" asp-action="Index">
+                                                Mediciones
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </li>
+
+                            @if (isAdmin)
+                            {
+                                <li class="nav-item px-3"><hr class="text-white-50 my-2 p-0"></li>
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#adminMenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="adminMenu">
+                                        <i class="fas fa-users-cog"></i> Administración
+                                    </a>
+                                    <div class="collapse" id="adminMenu">
+                                        <ul class="nav flex-column">
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-controller="T_Usuario" asp-action="Index">
+                                                    Usuarios
+                                                </a>
+                                            </li>
+                                            <li class="nav-item">
+                                                <a class="nav-link" asp-controller="T_Rol" asp-action="Index">
+                                                    Roles
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </li>
+
+                                <li class="nav-item">
+                                    <a class="nav-link" href="#configMenu" data-bs-toggle="collapse" role="button" aria-expanded="false" aria-controls="configMenu">
+                                        <i class="fas fa-cogs"></i> Configuración
+                                    </a>
+                                    <div class="collapse" id="configMenu">
+                                        <ul class="nav flex-column">
+                                            <li class="nav-item"><a class="nav-link" asp-controller="T_Establecimiento" asp-action="Index">Establecimientos</a></li>
+                                            <li class="nav-item"><a class="nav-link" asp-controller="T_Curso" asp-action="Index">Cursos</a></li>
+                                            <li class="nav-item"><a class="nav-link" asp-controller="T_Comuna" asp-action="Index">Comunas</a></li>
+                                            <li class="nav-item"><a class="nav-link" asp-controller="T_Region" asp-action="Index">Regiones</a></li>
+                                            <li class="nav-item"><a class="nav-link" asp-controller="T_CategoriaIMC" asp-action="Index">Categorías IMC</a></li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            }
+
+                            <li class="nav-item px-3"><hr class="text-white-50 my-2 p-0"></li>
+                            <li class="nav-item">
+                                <form asp-controller="Login" asp-action="Logout" method="post">
+                                    <button type="submit" class="nav-link btn btn-link text-start w-100">
+                                        <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
+            }
+
+
+            <main id="main-content" class="col-md-12 px-md-4">
+
+                @if (isAuthenticated)
+                {
+                    <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
+
+                        <div class="d-flex align-items-center">
+                            <button id="sidebarToggle" class="btn btn-link me-2 p-0" type="button"
+                                    data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas"
+                                    aria-controls="sidebarOffcanvas">
+                                <i class="fas fa-bars fs-4"></i>
+                            </button>
+
+                            <h1 class="h2">@ViewData["Title"]</h1>
+                        </div>
+
+                     
+                    </div>
+                }
+
                 @RenderBody()
             </main>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="~/js/site.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 

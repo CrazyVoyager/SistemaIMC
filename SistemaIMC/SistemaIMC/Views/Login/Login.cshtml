@@ -1,0 +1,33 @@
+﻿@using SistemaIMC.Models
+@model T_Usuario // Aunque solo usamos las propiedades como referencia
+
+@{
+    ViewData["Title"] = "Iniciar Sesión";
+    Layout = "_LoginLayout"; // Usa el layout específico para login
+}
+
+<form class="form-signin" method="post" asp-controller="Login" asp-action="Login">
+    <h1 class="h3 mb-3 fw-normal">Iniciar Sesión</h1>
+
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+    <div class="form-floating mb-3">
+        <input type="email" class="form-control" id="correoElectronico" name="correoElectronico" placeholder="nombre@ejemplo.com" required autofocus>
+        <label for="correoElectronico">Correo Electrónico</label>
+    </div>
+
+    <div class="form-floating mb-3">
+        <input type="password" class="form-control" id="contrasena" name="contrasena" placeholder="Contraseña" required>
+        <label for="contrasena">Contraseña</label>
+    </div>
+
+    <button class="w-100 btn btn-lg btn-primary" type="submit">Entrar</button>
+
+    <p class="mt-5 mb-3 text-muted">&copy; @DateTime.Now.Year</p>
+</form>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

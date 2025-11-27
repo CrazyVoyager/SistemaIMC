@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using SistemaIMC.Data;
 
@@ -5,6 +6,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Login/Login"; // Ruta a la acción de login
+        options.AccessDeniedPath = "/Login/AccessDenied"; // Ruta para acceso denegado
+        options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+    });
 
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -29,10 +38,11 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Login}/{id?}");
 
 app.Run();
