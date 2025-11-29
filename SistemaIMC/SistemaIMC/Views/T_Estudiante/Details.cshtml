@@ -1,54 +1,102 @@
 ﻿@model SistemaIMC.Models.T_Estudiante
 
 @{
-    ViewData["Title"] = "Details";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Asumiendo que usas el layout principal
+    ViewData["Title"] = "Detalles del Estudiante";
 }
 
-<h1>Details</h1>
+<div class="container-fluid">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-search me-2"></i> Detalles del Estudiante</h1>
+    </div>
 
-<div>
-    <h4>T_Estudiante</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.NombreCompleto)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.NombreCompleto)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FechaNacimiento)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FechaNacimiento)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ID_Sexo)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ID_Sexo)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ID_Establecimiento)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ID_Establecimiento)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ID_Curso)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ID_Curso)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EstadoRegistro)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EstadoRegistro)
-        </dd>
-    </dl>
+    <div class="card shadow mb-4">
+        <div class="card-header py-3 bg-primary">
+            <h6 class="m-0 font-weight-bold text-white">Estudiante: @Model.NombreCompleto</h6>
+        </div>
+        <div class="card-body">
+
+            @* SECCIÓN 1: DATOS PERSONALES *@
+            <h5 class="text-primary mb-3">Datos Personales</h5>
+            <dl class="row border-bottom pb-2 mb-4">
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.NombreCompleto)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.NombreCompleto)</dd>
+
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FechaNacimiento)</dt>
+                <dd class="col-sm-9">@Model.FechaNacimiento.ToString("dd-MM-yyyy")</dd>
+
+                @* Mostrar el nombre del sexo en lugar del ID, asumiendo que la propiedad de navegación está cargada *@
+                <dt class="col-sm-3">Sexo</dt>
+                <dd class="col-sm-9">@(Model.Sexo?.Sexo ?? "N/A")</dd>
+            </dl>
+
+            @* SECCIÓN 2: DATOS CURRICULARES *@
+            <h5 class="text-primary mb-3">Información Curricular</h5>
+            <dl class="row border-bottom pb-2 mb-4">
+                @* Mostrar el nombre del establecimiento en lugar del ID *@
+                <dt class="col-sm-3">Establecimiento</dt>
+                <dd class="col-sm-9">@(Model.Establecimiento?.NombreEstablecimiento ?? "N/A")</dd>
+
+                @* Mostrar el nombre del curso en lugar del ID *@
+                <dt class="col-sm-3">Curso</dt>
+                <dd class="col-sm-9">@(Model.Curso?.NombreCurso ?? "N/A")</dd>
+            </dl>
+
+            @* SECCIÓN 3: ESTADO DEL REGISTRO *@
+            <h5 class="text-primary mb-3">Estado</h5>
+            <dl class="row">
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.EstadoRegistro)</dt>
+                <dd class="col-sm-9">
+                    @* Muestra el estado como un badge de color *@
+                    @if (Model.EstadoRegistro)
+                    {
+                        <span class="badge bg-success">Activo</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-danger">Inactivo</span>
+                    }
+                </dd>
+            </dl>
+
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.ID_Estudiante">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+
+<div class="my-4">
+    @* ⭐ BOTÓN MEDICIONES: Lleva a T_MedicionNutricional/MedicionesPorEstudiante *@
+    <a href="#"
+       id="btnVerHistorial"
+       data-estudiante-id="@Model?.ID_Estudiante"
+       class="btn btn-success me-2"
+       title="Ver Historial de Mediciones Nutricionales"
+       data-bs-toggle="modal"
+       data-bs-target="#historialModal">
+        <i class="fas fa-chart-line me-1"></i> Ver Historial de Mediciones
+    </a>
+
+    <a asp-action="Edit" asp-route-id="@Model?.ID_Estudiante" class="btn btn-warning me-2" title="Editar Estudiante">
+        <i class="fas fa-edit me-1"></i> Editar
+    </a>
+    <a asp-action="Index" class="btn btn-secondary" title="Volver a la Lista de Estudiantes">
+        <i class="fas fa-arrow-left me-1"></i> Volver a la Lista
+    </a>
 </div>
+<div class="modal fade" id="historialModal" tabindex="-1" aria-labelledby="historialModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="mt-2">Cargando historial de mediciones...</p>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/historialModal.js"></script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

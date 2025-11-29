@@ -22,7 +22,66 @@
             </a>
         }
     </div>
-
+    <form asp-action="Index" method="get" class="mb-4" id="formFiltros">
+        <div class="card shadow">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Filtro Geográfico y Curricular</h6>
+            </div>
+            <div class="card-body">
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="searchRut" class="form-label fw-bold text-primary">Buscar por RUT</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" name="searchRut" id="searchRut"
+                                   class="form-control rut-input"
+                                   placeholder="Ingrese RUT del estudiante (ej: 12.345.678-9)"
+                                   value="@ViewData["CurrentFilterRut"]"
+                                   maxlength="12">  
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="ddlRegion" class="form-label">Región</label>
+                        <select name="RegionId" id="ddlRegion" class="form-select form-control" asp-items="ViewBag.RegionId">
+                            <option value="">Todas las Regiones</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="ddlComuna" class="form-label">Comuna</label>
+                        <select name="ComunaId" id="ddlComuna" class="form-select form-control" asp-items="ViewBag.Comunas" disabled>
+                            <option value="">Todas las Comunas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="ddlEstablecimiento" class="form-label">Establecimiento</label>
+                        <select name="EstablecimientoId" id="ddlEstablecimiento" class="form-select form-control" asp-items="ViewBag.Establecimientos" disabled>
+                            <option value="">Todos los Establecimientos</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="ddlCurso" class="form-label">Curso</label>
+                        <select name="CursoId" id="ddlCurso" class="form-select form-control" asp-items="ViewBag.Cursos" disabled>
+                            <option value="">Todos los Cursos</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-info w-100">
+                            <i class="fas fa-filter me-1"></i> Aplicar Filtro
+                        </button>
+                    </div>
+                    <div class="col-md-2">
+                        <a asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="fas fa-undo me-1"></i> Limpiar Filtros
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">Lista de Mediciones</h6>
@@ -35,12 +94,14 @@
                         <thead class="table-light">
                             <tr>
                                 <th>ID</th>
+                                <th>RUT</th>
                                 <th>Nombre del Estudiante</th>
                                 <th>Fecha Medición</th>
                                 <th>Peso (kg)</th>
                                 <th>Estatura (cm)</th>
-                                <th>IMC</th>
                                 <th>Categoría</th>
+                                <th>Z-Score</th>
+                                <th>IMC</th>
                                 <th>Docente</th>
                                 <th>Fecha Registro</th>
                                 <th>Acciones</th>
@@ -51,12 +112,18 @@
                             {
                                 <tr>
                                     <td>@medicion.ID_Medicion</td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border">
+                                            @(medicion.Estudiante?.RUT ?? "Sin RUT")
+                                        </span>
+                                    </td>
                                     <td>@medicion.Estudiante?.NombreCompleto</td>
                                     <td>@medicion.FechaMedicion.ToString("dd-MM-yyyy")</td>
                                     <td>@medicion.Peso_kg</td>
                                     <td>@medicion.Estatura_cm</td>
-                                    <td>@medicion.IMC</td>
                                     <td>@medicion.CategoriaIMC?.NombreCategoria</td>
+                                    <td>@(medicion.ClasificacionFinal != null ? medicion.ClasificacionFinal.Puntuacion_Z.ToString() : "N/A")</td>
+                                    <td>@(medicion.IMC.HasValue? medicion.IMC.Value.ToString("F2") : "N/A")</td>
                                     <td>@medicion.DocenteEncargado?.Nombre</td>
                                     <td>@medicion.FechaRegistro.ToString()</td>
                                     <td>
@@ -109,3 +176,10 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    @{
+        <script src="~/js/filtrosBusqueda.js"></script>
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

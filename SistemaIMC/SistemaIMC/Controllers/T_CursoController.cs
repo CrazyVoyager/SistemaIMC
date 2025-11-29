@@ -17,10 +17,26 @@ namespace SistemaIMC.Controllers
 
         public T_CursoController(TdDbContext context) { _context = context; }
 
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? EstablecimientoId)
         {
-            var curso = await _context.T_Curso.Include(c => c.Establecimiento).ToListAsync();
-            return View(curso);
+            // 1. Obtener la lista de establecimientos para el filtro (ViewData)
+            var establecimientos = await _context.T_Establecimientos
+                .OrderBy(e => e.NombreEstablecimiento)
+                .ToListAsync();
+            // Añadir la opción "Todos"
+            ViewBag.EstablecimientoId = new SelectList(establecimientos, "ID_Establecimiento", "NombreEstablecimiento", EstablecimientoId);
+
+            // 2. Construir la consulta base con inclusiones
+            var cursos = _context.T_Curso.Include(c => c.Establecimiento).AsQueryable();
+
+            // 3. Aplicar el filtro si se seleccionó uno
+            if (EstablecimientoId.HasValue && EstablecimientoId.Value > 0)
+            {
+                cursos = cursos.Where(c => c.ID_Establecimiento == EstablecimientoId.Value);
+            }
+
+            // 4. Devolver la lista filtrada
+            return View(await cursos.ToListAsync());
         }
 
         public async Task<IActionResult> Details(int? id)

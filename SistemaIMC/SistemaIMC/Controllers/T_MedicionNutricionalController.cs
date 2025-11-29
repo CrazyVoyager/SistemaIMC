@@ -56,10 +56,23 @@ namespace SistemaIMC.Controllers
 
         // GET: T_MedicionNutricional/Create - SOLO Admin y Profesor
         [Authorize(Roles = "Administrador del Sistema, Profesor / Encargado de Mediciones")]
-        public IActionResult Create()
+        public IActionResult Create(int? ID_Estudiante)
         {
-            PopulateDropdowns();
-            return View();
+            // 2. Crea una instancia temporal para transportar el ID
+            var nuevaMedicion = new T_MedicionNutricional();
+
+            if (ID_Estudiante.HasValue)
+            {
+                nuevaMedicion.ID_Estudiante = ID_Estudiante.Value;
+            }
+
+            // 3. Pasa el modelo a PopulateDropdowns. 
+            // Esto asegura que el SelectList tenga el valor "Selected" correcto internamente.
+            PopulateDropdowns(nuevaMedicion);
+
+            // 4. Retorna la vista con el modelo. 
+            // Esto asegura que el <select asp-for="ID_Estudiante"> tome el valor del modelo.
+            return View(nuevaMedicion);
         }
 
         // POST: T_MedicionNutricional/Create - SOLO Admin y Profesor
@@ -174,14 +187,61 @@ namespace SistemaIMC.Controllers
         }
 
         // GET: T_MedicionNutricional (Index) - Accesible para Admin, Director y Profesor
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int? RegionId, int? ComunaId, int? EstablecimientoId, int? CursoId, string searchRut)
         {
-            var mediciones = await _context.T_MedicionNutricional
+            // --- 1. Carga inicial de Dropdowns (solo la primera lista y precarga de seleccionados) ---
+            var regiones = await _context.T_Region
+                .OrderBy(r => r.NombreRegion)
+                .ToListAsync();
+            ViewBag.RegionId = new SelectList(regiones, "ID_Region", "NombreRegion", RegionId);
+
+            // Inicializar los demás ViewBags para que la vista recupere la selección si aplica
+            ViewBag.Comunas = new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text", ComunaId);
+            ViewBag.Establecimientos = new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text", EstablecimientoId);
+            ViewBag.Cursos = new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text", CursoId);
+
+            // --- 2. Construcción de la Consulta y Aplicación de Filtros ---
+
+            // Consulta base con inclusiones necesarias para el display y la navegación de filtros.
+            ViewData["CurrentFilterRut"] = searchRut;
+
+            var medicionesQuery = _context.T_MedicionNutricional
+                // Incluir toda la cadena de navegación: Medicion -> Estudiante -> Curso -> Establecimiento -> Comuna -> Región
                 .Include(m => m.Estudiante)
+                    .ThenInclude(e => e.Curso)
+                        .ThenInclude(c => c.Establecimiento)
+                            .ThenInclude(e => e.Comuna)
+                                .ThenInclude(c => c.Region)
                 .Include(m => m.CategoriaIMC)
                 .Include(m => m.DocenteEncargado)
-                .ToListAsync();
+                .Include(m => m.ClasificacionFinal)
+                .AsQueryable();
 
+            // Aplicar filtros de forma jerárquica (el filtro más específico anula los más generales)
+            if (CursoId.HasValue && CursoId.Value > 0)
+            {
+                medicionesQuery = medicionesQuery.Where(m => m.Estudiante.ID_Curso == CursoId.Value);
+            }
+            else if (EstablecimientoId.HasValue && EstablecimientoId.Value > 0)
+            {
+                medicionesQuery = medicionesQuery.Where(m => m.Estudiante.Curso.ID_Establecimiento == EstablecimientoId.Value);
+            }
+            else if (ComunaId.HasValue && ComunaId.Value > 0)
+            {
+                medicionesQuery = medicionesQuery.Where(m => m.Estudiante.Curso.Establecimiento.ID_Comuna == ComunaId.Value);
+            }
+            else if (RegionId.HasValue && RegionId.Value > 0)
+            {
+                medicionesQuery = medicionesQuery.Where(m => m.Estudiante.Curso.Establecimiento.Comuna.ID_Region == RegionId.Value);
+            }
+            if (!string.IsNullOrEmpty(searchRut))
+            {
+                // Usamos Contains para que encuentre coincidencias parciales (ej: "123" encuentra "123456")
+                // Opcional: .Trim() elimina espacios accidentales
+                medicionesQuery = medicionesQuery.Where(m => m.Estudiante.RUT.Contains(searchRut.Trim()));
+            }
+            // Obtener la lista final
+            var mediciones = await medicionesQuery.ToListAsync();
             return View(mediciones);
         }
 
@@ -189,7 +249,13 @@ namespace SistemaIMC.Controllers
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
-            var t_MedicionNutricional = await _context.T_MedicionNutricional.FirstOrDefaultAsync(m => m.ID_Medicion == id);
+            var t_MedicionNutricional = await _context.T_MedicionNutricional
+                .Include(m => m.Estudiante)          
+                .Include(m => m.DocenteEncargado)    
+                .Include(m => m.CategoriaIMC)         
+                .Include(m => m.ClasificacionFinal)   
+                .FirstOrDefaultAsync(m => m.ID_Medicion == id);
+
             if (t_MedicionNutricional == null) return NotFound();
             return View(t_MedicionNutricional);
         }
@@ -216,6 +282,79 @@ namespace SistemaIMC.Controllers
             }
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [Authorize(Roles = "Administrador del Sistema, Supervisor / Director de la Entidad, Profesor / Encargado de Mediciones")]
+        // Ubicación: T_MedicionNutricionalController.cs
+
+        [HttpGet]
+        public async Task<IActionResult> HistorialMedicionesModal(int? estudianteId)
+        {
+            if (estudianteId == null)
+            {
+                return BadRequest("ID de estudiante no proporcionado.");
+            }
+
+            // 1. Cargar la información del estudiante (incluyendo RUT)
+            var estudiante = await _context.T_Estudiante
+                .FirstOrDefaultAsync(e => e.ID_Estudiante == estudianteId);
+                
+
+            if (estudiante == null)
+            {
+                return NotFound();
+            }
+
+            // 2. Cargar las mediciones
+            var mediciones = await _context.T_MedicionNutricional
+                // Usamos .Include(m => m.ClasificacionFinal) para asegurar que tengamos los datos de clasificación
+                .Include(m => m.ClasificacionFinal)
+                .Include(m => m.CategoriaIMC).Where(m => m.ID_Estudiante == estudianteId)
+                .OrderByDescending(m => m.FechaMedicion)
+                .ToListAsync();
+
+            // 3. Almacenar la información del estudiante en ViewData
+            ViewData["NombreEstudiante"] = estudiante.NombreCompleto;
+            ViewData["RUTEstudiante"] = estudiante.RUT;
+            ViewData["ID_Estudiante"] = estudiante.ID_Estudiante;
+            // 4. Devolver la vista parcial con los datos de las mediciones
+            return PartialView("_HistorialMedicionesModal", mediciones);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetComunasByRegion(int regionId)
+        {
+            var comunas = await _context.T_Comunas
+                .Where(c => c.ID_Region == regionId)
+                .Select(c => new { id = c.ID_Comuna, name = c.NombreComuna })
+                .OrderBy(c => c.name)
+                .ToListAsync();
+
+            return Json(comunas);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetEstablecimientosByComuna(int comunaId)
+        {
+            var establecimientos = await _context.T_Establecimientos
+                .Where(e => e.ID_Comuna == comunaId)
+                .Select(e => new { id = e.ID_Establecimiento, name = e.NombreEstablecimiento })
+                .OrderBy(e => e.name)
+                .ToListAsync();
+
+            return Json(establecimientos);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetCursosByEstablecimiento(int establecimientoId)
+        {
+            var cursos = await _context.T_Curso
+                .Where(c => c.ID_Establecimiento == establecimientoId)
+                .Select(c => new { id = c.ID_Curso, name = c.NombreCurso })
+                .OrderBy(c => c.name)
+                .ToListAsync();
+
+            return Json(cursos);
         }
 
         private bool T_MedicionNutricionalExists(int id)

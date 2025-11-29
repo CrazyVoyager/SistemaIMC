@@ -23,7 +23,66 @@
             </a>
         }
     </div>
-
+    <form asp-action="Index" method="get" class="mb-4" id="formFiltros">
+        <div class="card shadow">
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label for="searchRut" class="form-label fw-bold text-primary">Buscar por RUT</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="fas fa-search"></i></span>
+                        <input type="text" name="searchRut" id="searchRut"
+                               class="form-control rut-input"
+                               placeholder="Ingrese RUT del estudiante (ej: 12.345.678-9)"
+                               value="@ViewData["CurrentFilterRut"]"
+                               maxlength="12">
+                    </div>
+                </div>
+            </div>
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary">Filtro Geográfico y Curricular</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-3 mb-3">
+                        <label for="ddlRegion" class="form-label">Región</label>
+                        <select name="RegionId" id="ddlRegion" class="form-select form-control" asp-items="ViewBag.RegionId">
+                            <option value="">Todas las Regiones</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="ddlComuna" class="form-label">Comuna</label>
+                        <select name="ComunaId" id="ddlComuna" class="form-select form-control" asp-items="ViewBag.Comunas" disabled>
+                            <option value="">Todas las Comunas</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="ddlEstablecimiento" class="form-label">Establecimiento</label>
+                        <select name="EstablecimientoId" id="ddlEstablecimiento" class="form-select form-control" asp-items="ViewBag.Establecimientos" disabled>
+                            <option value="">Todos los Establecimientos</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <label for="ddlCurso" class="form-label">Curso</label>
+                        <select name="CursoId" id="ddlCurso" class="form-select form-control" asp-items="ViewBag.Cursos" disabled>
+                            <option value="">Todos los Cursos</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-2">
+                        <button type="submit" class="btn btn-info w-100">
+                            <i class="fas fa-filter me-1"></i> Aplicar Filtro
+                        </button>
+                    </div>
+                    <div class="col-md-2">
+                        <a asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="fas fa-undo me-1"></i> Limpiar Filtros
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">Lista de Estudiantes</h6>
@@ -36,6 +95,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>ID</th>
+                                <th>RUT</th>
                                 <th>Nombre Completo</th>
                                 <th>Fecha Nacimiento</th>
                                 <th>Sexo</th>
@@ -50,6 +110,11 @@
                             {
                                 <tr>
                                     <td>@estudiante.ID_Estudiante</td>
+                                    <td>
+                                        <span class="badge bg-light text-dark border">
+                                            @(estudiante.RUT ?? "Sin RUT")
+                                        </span>
+                                    </td>
                                     <td>@estudiante.NombreCompleto</td>
                                     <td>@estudiante.FechaNacimiento.ToString("dd-MM-yyyy")</td>
                                     <td>@(estudiante.Sexo?.Sexo ?? "N/A")</td>
@@ -69,19 +134,31 @@
                                         <div class="btn-group" role="group">
                                             @* BOTÓN DETALLES: Visible para TODOS (Incluido Director) *@
                                             <a asp-action="Details" asp-route-id="@estudiante.ID_Estudiante"
-                                               class="btn btn-info btn-sm">
+                                               class="btn btn-info btn-sm"
+                                               title="Ver Detalles del Estudiante">
                                                 <i class="fas fa-info-circle"></i>
+                                            </a>
+
+                                            <a href="#"
+                                               data-estudiante-id="@estudiante.ID_Estudiante"
+                                               class="btn btn-success btn-sm btn-historial-modal"
+                                               title="Ver Historial de Mediciones Nutricionales"
+                                               data-bs-toggle="modal"
+                                               data-bs-target="#historialModal">
+                                                <i class="fas fa-chart-line"></i>
                                             </a>
 
                                             @* BOTONES EDICIÓN: Solo Admin y Profesor *@
                                             @if (puedeEditar)
                                             {
                                                 <a asp-action="Edit" asp-route-id="@estudiante.ID_Estudiante"
-                                                   class="btn btn-warning btn-sm">
+                                                   class="btn btn-warning btn-sm"
+                                                   title="Editar Estudiante">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <a asp-action="Delete" asp-route-id="@estudiante.ID_Estudiante"
-                                                   class="btn btn-danger btn-sm">
+                                                   class="btn btn-danger btn-sm"
+                                                   title="Eliminar Estudiante">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                             }
@@ -115,3 +192,22 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="historialModal" tabindex="-1" aria-labelledby="historialModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-body text-center">
+                <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Cargando...</span>
+                </div>
+                <p class="mt-2">Cargando historial de mediciones...</p>
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    @{
+        <script src="~/js/historialModal.js"></script>
+        <script src="~/js/filtrosBusqueda.js"></script>
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

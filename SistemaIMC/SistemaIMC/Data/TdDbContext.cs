@@ -22,6 +22,7 @@ namespace SistemaIMC.Data
         public DbSet<SistemaIMC.Models.T_Rol> T_Rol { get; set; } = default!;
         public DbSet<SistemaIMC.Models.T_Usuario> T_Usuario { get; set; } = default!;
         public DbSet<SistemaIMC.Models.T_Sexo> T_Sexo { get; set; } = default!;
+        public DbSet<SistemaIMC.Models.T_Clasificacion_Nutricional> T_Clasificacion_Nutricional { get; set; } = default!;
 
 
 

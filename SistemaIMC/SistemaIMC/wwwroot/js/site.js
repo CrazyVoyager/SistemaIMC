@@ -34,7 +34,8 @@
     // 2. LÓGICA DE RUT (EVENTOS)
     // =======================================================
 
-    const rutInputs = document.querySelectorAll('input[name="RUT"]');
+    // 🎯 CAMBIO AQUÍ: Ahora selecciona los inputs con name="RUT" Y el input con name="searchRut"
+    const rutInputs = document.querySelectorAll('input[name="RUT"], input[name="searchRut"]');
 
     rutInputs.forEach(rutInput => {
         rutInput.addEventListener('input', function (e) {

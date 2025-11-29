@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
         if (!idEstablecimiento) return;
 
         try {
-            const response = await fetch(`${URL_API_CURSOS}?idEstablecimiento=${idEstablecimiento}`);
+            const response = await fetch(`${URL_API_CURSOS}?establecimientoId=${idEstablecimiento}`);
 
             if (!response.ok) {
                 throw new Error(`Error al obtener los cursos. Código: ${response.status}`);

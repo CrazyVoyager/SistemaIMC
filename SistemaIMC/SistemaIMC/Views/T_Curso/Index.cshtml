@@ -15,11 +15,31 @@
             <i class="fas fa-plus me-1"></i> Nuevo Curso
         </a>
     </div>
-
+    <form asp-action="Index" method="get" class="mb-4">
+        <div class="card shadow">
+            <div class="card-body">
+                <div class="row align-items-end">
+                    <div class="col-md-4">
+                        <label for="EstablecimientoId" class="form-label">Filtrar por Establecimiento</label>
+                        <select name="EstablecimientoId" class="form-select form-control"
+                                asp-items="ViewBag.EstablecimientoId">
+                            <option value="">-- Todos los Establecimientos --</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 mt-3 mt-md-0">
+                        <button type="submit" class="btn btn-info w-100">
+                            <i class="fas fa-filter me-1"></i> Aplicar Filtro
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
     <div class="card shadow mb-4">
         <div class="card-header py-3">
             <h6 class="m-0 font-weight-bold text-primary">Lista de Cursos</h6>
         </div>
+
         <div class="card-body">
             @if (Model != null && Model.Any())
             {

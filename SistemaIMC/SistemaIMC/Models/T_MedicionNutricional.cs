@@ -27,6 +27,9 @@ namespace SistemaIMC.Models
         public int? Edad_Meses_Medicion { get; set; }
         public string? Referencia_Normativa { get; set; }
 
+
+        public T_Clasificacion_Nutricional? ClasificacionFinal { get; set; }
+
         // Otros campos
         public string? Observaciones { get; set; }
         public DateTime? FechaRegistro { get; set; }
