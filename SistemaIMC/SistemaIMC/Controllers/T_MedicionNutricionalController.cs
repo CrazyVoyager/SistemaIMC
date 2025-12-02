@@ -5,6 +5,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using SistemaIMC.Data;
 using SistemaIMC.Models;
+using SistemaIMC.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -320,6 +321,79 @@ namespace SistemaIMC.Controllers
             // 4. Devolver la vista parcial con los datos de las mediciones
             return PartialView("_HistorialMedicionesModal", mediciones);
         }
+
+
+        [HttpGet]
+        [Authorize(Roles = "Administrador del Sistema, Supervisor / Director de la Entidad, Profesor / Encargado de Mediciones")]
+        public async Task<IActionResult> ExportarMediciones(int? RegionId, int? ComunaId, int? EstablecimientoId, int? CursoId, string searchRut)
+        {
+            try
+            {
+                var medicionesQuery = _context.T_MedicionNutricional
+                    .Include(m => m.Estudiante)
+                        .ThenInclude(e => e.Curso)
+                            .ThenInclude(c => c.Establecimiento)
+                                .ThenInclude(e => e.Comuna)
+                                    .ThenInclude(c => c.Region)
+                    .Include(m => m.CategoriaIMC)
+                    .Include(m => m.DocenteEncargado)
+                    .Include(m => m.ClasificacionFinal)
+                    .AsQueryable();
+
+                // Aplicar filtros (misma lógica que Index)
+                if (CursoId.HasValue && CursoId.Value > 0)
+                {
+                    medicionesQuery = medicionesQuery.Where(m => m.Estudiante.ID_Curso == CursoId.Value);
+                }
+                else if (EstablecimientoId.HasValue && EstablecimientoId.Value > 0)
+                {
+                    medicionesQuery = medicionesQuery.Where(m => m.Estudiante.Curso.ID_Establecimiento == EstablecimientoId.Value);
+                }
+                else if (ComunaId.HasValue && ComunaId.Value > 0)
+                {
+                    medicionesQuery = medicionesQuery.Where(m => m.Estudiante.Curso.Establecimiento.ID_Comuna == ComunaId.Value);
+                }
+                else if (RegionId.HasValue && RegionId.Value > 0)
+                {
+                    medicionesQuery = medicionesQuery.Where(m => m.Estudiante.Curso.Establecimiento.Comuna.ID_Region == RegionId.Value);
+                }
+
+                if (!string.IsNullOrEmpty(searchRut))
+                {
+                    medicionesQuery = medicionesQuery.Where(m => m.Estudiante.RUT.Contains(searchRut.Trim()));
+                }
+
+                var mediciones = await medicionesQuery.ToListAsync();
+
+                // Crear DTO para exportación con información legible
+                var medicionesExport = mediciones.Select(m => new
+                {
+                    RUTEstudiante = m.Estudiante?.RUT ?? "N/A",
+                    NombreEstudiante = m.Estudiante?.NombreCompleto ?? "N/A",
+                    FechaMedicion = m.FechaMedicion.ToString("dd/MM/yyyy"),
+                    PesoKg = m.Peso_kg,
+                    EstatuaCm = m.Estatura_cm,
+                    IMC = Math.Round(m.IMC ?? 0, 2),
+                    Categoria = m.CategoriaIMC?.NombreCategoria ?? "No clasificada",
+                    ZScore = Math.Round(m.ZScore_IMC ?? 0, 2),
+                    EdadMeses = m.Edad_Meses_Medicion,
+                    Docente = m.DocenteEncargado?.Nombre ?? "N/A",
+                    Observaciones = m.Observaciones ?? ""
+                }).ToList();
+
+                var excelBytes = ExcelExportService.ExportToExcel(medicionesExport, "Mediciones Nutricionales");
+                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    $"Mediciones_{DateTime.Now:yyyyMMddHHmmss}.xlsx");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Error al exportar: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
+        }
+
+
+
 
         [HttpGet]
         public async Task<IActionResult> GetComunasByRegion(int regionId)

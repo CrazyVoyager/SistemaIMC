@@ -91,3 +91,76 @@ function formatRutWithDashOnly(rut) {
     // Si aún no está completo, devuelve el valor limpio sin guion
     return value;
 }
+
+
+
+/**
+ * Exporta datos a Excel con indicador de carga
+ * @param {string} actionName - Nombre de la acción en el controlador
+ * @param {string} controllerName - Nombre del controlador
+ * @param {Object} parameters - Parámetros adicionales
+ */
+function exportarAExcel(actionName, controllerName, parameters = {}) {
+    try {
+        // Mostrar indicador de carga
+        const btn = event.target.closest('button');
+        const textoOriginal = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Exportando...';
+
+        // Construir URL
+        let url = `/${controllerName}/${actionName}? `;
+        const queryParams = new URLSearchParams(parameters);
+        url += queryParams.toString();
+
+        // Descargar después de un pequeño delay
+        setTimeout(() => {
+            window.location.href = url;
+
+            // Restaurar botón después de 2 segundos
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = textoOriginal;
+            }, 2000);
+        }, 500);
+
+    } catch (error) {
+        console.error('Error al exportar:', error);
+        alert('Error al exportar los datos.  Por favor, intenta nuevamente.');
+        const btn = event.target.closest('button');
+        btn.disabled = false;
+    }
+}
+
+/**
+ * Exporta manteniendo los filtros actuales con indicador de carga
+ * @param {string} actionName - Nombre de la acción
+ * @param {string} controllerName - Nombre del controlador
+ */
+function exportarConFiltros(actionName, controllerName) {
+    try {
+        const btn = event.target.closest('button');
+        const textoOriginal = btn.innerHTML;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Exportando...';
+
+        const currentParams = new URLSearchParams(window.location.search);
+        let url = `/${controllerName}/${actionName}?`;
+        url += currentParams.toString();
+
+        setTimeout(() => {
+            window.location.href = url;
+
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerHTML = textoOriginal;
+            }, 2000);
+        }, 500);
+
+    } catch (error) {
+        console.error('Error al exportar con filtros:', error);
+        alert('Error al exportar los datos. Por favor, intenta nuevamente.');
+        const btn = event.target.closest('button');
+        btn.disabled = false;
+    }
+}

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using SistemaIMC.Data;
 using SistemaIMC.Models;
+using SistemaIMC.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -222,6 +223,69 @@ namespace SistemaIMC.Controllers
             if (t_Estudiante != null) _context.T_Estudiante.Remove(t_Estudiante);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+
+        [HttpGet]
+        [Authorize(Roles = "Administrador del Sistema, Supervisor / Director de la Entidad, Profesor / Encargado de Mediciones")]
+        public async Task<IActionResult> ExportarEstudiantes(int? RegionId, int? ComunaId, int? EstablecimientoId, int? CursoId, string searchRut)
+        {
+            try
+            {
+                var estudiantesQuery = _context.T_Estudiante
+                    .Include(e => e.Establecimiento)
+                        .ThenInclude(est => est.Comuna)
+                            .ThenInclude(com => com.Region)
+                    .Include(e => e.Curso)
+                    .Include(e => e.Sexo)
+                    .AsQueryable();
+
+                // Aplicar filtros (misma lógica que Index)
+                if (CursoId.HasValue && CursoId.Value > 0)
+                {
+                    estudiantesQuery = estudiantesQuery.Where(e => e.ID_Curso == CursoId.Value);
+                }
+                else if (EstablecimientoId.HasValue && EstablecimientoId.Value > 0)
+                {
+                    estudiantesQuery = estudiantesQuery.Where(e => e.ID_Establecimiento == EstablecimientoId.Value);
+                }
+                else if (ComunaId.HasValue && ComunaId.Value > 0)
+                {
+                    estudiantesQuery = estudiantesQuery.Where(e => e.Establecimiento.ID_Comuna == ComunaId.Value);
+                }
+                else if (RegionId.HasValue && RegionId.Value > 0)
+                {
+                    estudiantesQuery = estudiantesQuery.Where(e => e.Establecimiento.Comuna.ID_Region == RegionId.Value);
+                }
+
+                if (!string.IsNullOrEmpty(searchRut))
+                {
+                    estudiantesQuery = estudiantesQuery.Where(e => e.RUT.Contains(searchRut.Trim()));
+                }
+
+                var estudiantes = await estudiantesQuery.ToListAsync();
+
+                // Crear DTO para exportación con información legible
+                var estudiantesExport = estudiantes.Select(e => new
+                {
+                    RUT = e.RUT,
+                    NombreCompleto = e.NombreCompleto,
+                    FechaNacimiento = e.FechaNacimiento.ToString("dd/MM/yyyy"),
+                    Sexo = e.Sexo?.Sexo ?? "N/A",
+                    Establecimiento = e.Establecimiento?.NombreEstablecimiento ?? "N/A",
+                    Curso = e.Curso?.NombreCurso ?? "N/A",
+                    Estado = e.EstadoRegistro ? "Activo" : "Inactivo"
+                }).ToList();
+
+                var excelBytes = ExcelExportService.ExportToExcel(estudiantesExport, "Estudiantes");
+                return File(excelBytes, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    $"Estudiantes_{DateTime.Now:yyyyMMddHHmmss}.xlsx");
+            }
+            catch (Exception ex)
+            {
+                TempData["Error"] = $"Error al exportar: {ex.Message}";
+                return RedirectToAction(nameof(Index));
+            }
         }
 
 

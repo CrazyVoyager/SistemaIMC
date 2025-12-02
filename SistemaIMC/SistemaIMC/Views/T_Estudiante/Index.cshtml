@@ -22,6 +22,16 @@
                 <i class="fas fa-plus me-1"></i> Nuevo Estudiante
             </a>
         }
+
+        <!-- Botón simple sin parámetros -->
+        <button type="button" class="btn btn-success" onclick="exportarAExcel('ExportarEstudiantes', 'T_Estudiante')">
+            <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
+        </button>
+
+        <!-- O botón que mantiene los filtros actuales -->
+        <button type="button" class="btn btn-success" onclick="exportarConFiltros('ExportarEstudiantes', 'T_Estudiante')">
+            <i class="bi bi-file-earmark-excel"></i> Exportar a Excel con Filtros
+        </button>
     </div>
     <form asp-action="Index" method="get" class="mb-4" id="formFiltros">
         <div class="card shadow">
