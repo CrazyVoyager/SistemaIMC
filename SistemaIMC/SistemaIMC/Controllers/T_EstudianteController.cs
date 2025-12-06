@@ -108,67 +108,45 @@ namespace SistemaIMC.Controllers
             return View(t_Estudiante);
         }
 
-        // CREATE (GET) - Solo Admin y Profesor
-        [Authorize(Roles = "Administrador del Sistema, Profesor / Encargado de Mediciones")]
-        public async Task<IActionResult> Create(int? ID_Estudiante) // ⭐️ AÑADIR ESTE PARÁMETRO
+
+// CREATE (GET)
+[Authorize(Roles = "Administrador del Sistema, Profesor / Encargado de Mediciones")]
+    public async Task<IActionResult> Create()
+    {
+        ViewBag.RegionId = new SelectList(await _context.T_Region.OrderBy(r => r.NombreRegion).ToListAsync(), "ID_Region", "NombreRegion");
+        // Los siguientes combos iniciar vacíos, se llenan con JS como dependientes
+        ViewBag.Comunas = new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text");
+        ViewBag.ID_Establecimiento = new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text");
+        ViewBag.ID_Curso = new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text");
+        ViewBag.ID_Sexo = new SelectList(await _context.T_Sexo.ToListAsync(), "ID_Sexo", "Sexo");
+
+        return View();
+    }
+
+    // CREATE (POST)
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    [Authorize(Roles = "Administrador del Sistema, Profesor / Encargado de Mediciones")]
+    public async Task<IActionResult> Create([Bind("RUT,NombreCompleto,FechaNacimiento,ID_Sexo,ID_Establecimiento,ID_Curso,EstadoRegistro")] T_Estudiante t_Estudiante)
+    {
+        if (ModelState.IsValid)
         {
-            // 1. Lógica para preseleccionar el estudiante si el ID viene en la URL
-            if (ID_Estudiante.HasValue)
-            {
-                // NOTA: Asumo que en el formulario Create.cshtml tienes un <select asp-for="ID_Estudiante" ...>
-
-                // Obtener la lista completa de estudiantes (o solo los activos)
-                var estudiantes = await _context.T_Estudiante
-                    .Where(e => e.EstadoRegistro) // Ejemplo de filtro
-                    .OrderBy(e => e.NombreCompleto)
-                    .ToListAsync();
-
-                // Cargar el SelectList, usando ID_Estudiante.Value para preseleccionar
-                ViewData["ID_Estudiante"] = new SelectList(
-                    estudiantes,
-                    "ID_Estudiante",
-                    "NombreCompleto",
-                    ID_Estudiante.Value // <--- Esto fuerza la selección en la vista
-                );
-            }
-            else
-            {
-                // Si no viene el ID, carga la lista sin preselección (código original o una versión simplificada)
-                var estudiantes = await _context.T_Estudiante
-                    .Where(e => e.EstadoRegistro)
-                    .OrderBy(e => e.NombreCompleto)
-                    .ToListAsync();
-
-                ViewData["ID_Estudiante"] = new SelectList(
-                    estudiantes,
-                    "ID_Estudiante",
-                    "NombreCompleto"
-                );
-            }
-
-            // 2. Cargar los otros ViewBags
-            ViewBag.ID_Establecimiento = new SelectList(await _context.T_Establecimientos.OrderBy(e => e.NombreEstablecimiento).ToListAsync(), "ID_Establecimiento", "NombreEstablecimiento");
-            ViewBag.ID_Curso = new SelectList(await _context.T_Curso.OrderBy(c => c.NombreCurso).ToListAsync(), "ID_Curso", "NombreCurso");
-
-            return View();
+            _context.Add(t_Estudiante);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
+        // Si hay error, recarga selects necesarios para mostrar el formulario correctamente
+        ViewBag.RegionId = new SelectList(await _context.T_Region.OrderBy(r => r.NombreRegion).ToListAsync(), "ID_Region", "NombreRegion");
+        ViewBag.Comunas = new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text");
+        ViewBag.ID_Establecimiento = new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text");
+        ViewBag.ID_Curso = new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text");
+        ViewBag.ID_Sexo = new SelectList(await _context.T_Sexo.ToListAsync(), "ID_Sexo", "Sexo", t_Estudiante.ID_Sexo);
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        [Authorize(Roles = "Administrador del Sistema, Profesor / Encargado de Mediciones")]
-        public async Task<IActionResult> Create([Bind("ID_Estudiante,RUT,NombreCompleto,FechaNacimiento,ID_Sexo,ID_Establecimiento,ID_Curso,EstadoRegistro")] T_Estudiante t_Estudiante)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(t_Estudiante);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(t_Estudiante);
-        }
+        return View(t_Estudiante);
+    }
 
-        // EDIT - Solo Admin y Profesor
-        [Authorize(Roles = "Administrador del Sistema, Profesor / Encargado de Mediciones")]
+    // EDIT - Solo Admin y Profesor
+    [Authorize(Roles = "Administrador del Sistema, Profesor / Encargado de Mediciones")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();

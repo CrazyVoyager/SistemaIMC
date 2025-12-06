@@ -1,6 +1,4 @@
-﻿@* Ubicación: SistemaIMC/Views/T_Estudiante/Create.cshtml *@
-
-@model SistemaIMC.Models.T_Estudiante
+﻿@model SistemaIMC.Models.T_Estudiante
 @{
     ViewData["Title"] = "Crear Estudiante";
 }
@@ -15,20 +13,16 @@
             </div>
             <div class="card-body">
                 <form asp-action="Create" method="post" class="needs-validation" novalidate>
-
-                    @* ID_Estudiante es autoincremental (Key) *@
                     <div class="form-group">
                         <label asp-for="RUT" class="control-label"></label>
                         <input asp-for="RUT" class="form-control" />
                         <span asp-validation-for="RUT" class="text-danger"></span>
                     </div>
-
                     <div class="mb-3">
                         <label asp-for="NombreCompleto" class="form-label">Nombre Completo</label>
-                        <input asp-for="NombreCompleto" class="form-control" placeholder="Ingrese el nombre completo" required>
+                        <input asp-for="NombreCompleto" class="form-control" required>
                         <span asp-validation-for="NombreCompleto" class="text-danger small"></span>
                     </div>
-
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label asp-for="FechaNacimiento" class="form-label">Fecha de Nacimiento</label>
@@ -37,32 +31,44 @@
                         </div>
                         <div class="col-md-6 mb-3">
                             <label asp-for="ID_Sexo" class="form-label">Sexo</label>
-                            <select asp-for="ID_Sexo" class="form-select" required>
+                            <select asp-for="ID_Sexo" class="form-select" asp-items="ViewBag.ID_Sexo" required>
                                 <option value="">Seleccionar sexo</option>
-                                <option value="1">Masculino</option>
-                                <option value="2">Femenino</option>
                             </select>
                             <span asp-validation-for="ID_Sexo" class="text-danger small"></span>
                         </div>
                     </div>
 
+                    <!-- Cadena dependiente Región > Comuna > Establecimiento > Curso -->
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="ddlRegion" class="form-label">Región</label>
+                            <select id="ddlRegion" class="form-select" asp-items="ViewBag.RegionId" required>
+                                <option value="">Seleccione Región</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="ddlComuna" class="form-label">Comuna</label>
+                            <select id="ddlComuna" class="form-select" asp-items="ViewBag.Comunas" required disabled>
+                                <option value="">Seleccione Comuna</option>
+                            </select>
+                        </div>
+                    </div>
                     <div class="row">
                         <div class="col-md-6 mb-3">
                             <label asp-for="ID_Establecimiento" class="form-label">Establecimiento</label>
-                            <select asp-for="ID_Establecimiento" id="ddlEstablecimiento" class="form-select" asp-items="ViewBag.ID_Establecimiento" required>
-                                <option value="">Seleccionar Establecimiento</option>
+                            <select asp-for="ID_Establecimiento" id="ddlEstablecimiento" class="form-select" asp-items="ViewBag.ID_Establecimiento" required disabled>
+                                <option value="">Seleccione Establecimiento</option>
                             </select>
                             <span asp-validation-for="ID_Establecimiento" class="text-danger small"></span>
                         </div>
                         <div class="col-md-6 mb-3">
                             <label asp-for="ID_Curso" class="form-label">Curso</label>
-                            <select asp-for="ID_Curso" id="ddlCurso" class="form-select" disabled required>
-                                <option value="">Seleccionar Curso</option>
+                            <select asp-for="ID_Curso" id="ddlCurso" class="form-select" asp-items="ViewBag.ID_Curso" required disabled>
+                                <option value="">Seleccione Curso</option>
                             </select>
                             <span asp-validation-for="ID_Curso" class="text-danger small"></span>
                         </div>
                     </div>
-
                     <div class="mb-3">
                         <label asp-for="EstadoRegistro" class="form-label">Estado</label>
                         <select asp-for="EstadoRegistro" class="form-select" required>
@@ -71,7 +77,6 @@
                         </select>
                         <span asp-validation-for="EstadoRegistro" class="text-danger small"></span>
                     </div>
-
                     <div class="d-flex justify-content-between mt-4">
                         <a asp-action="Index" class="btn btn-secondary">
                             <i class="fas fa-arrow-left me-1"></i> Volver al Listado
@@ -87,8 +92,8 @@
 </div>
 
 @section Scripts {
+    <script src="~/js/createEstudiantes.js"></script>
     @{
-        <script src="~/js/createEstudiantes.js"></script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }
