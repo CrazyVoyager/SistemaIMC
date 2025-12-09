@@ -1,4 +1,5 @@
 ﻿@* Ubicación: SistemaIMC/Views/Home/Index.cshtml *@
+@model SistemaIMC.Models.ViewModels.DashboardViewModel
 
 @{
     ViewData["Title"] = "Página Principal";
@@ -33,6 +34,202 @@
     </div>
 </div>
 
+@* Tarjetas de Estadísticas Rápidas *@
+<div class="row mb-4">
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-primary shadow h-100 py-2 stat-card">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-primary text-uppercase mb-1">Total Estudiantes</div>
+                        <div class="h5 mb-0 fw-bold text-gray-800 counter" data-target="@Model.TotalEstudiantes">@Model.TotalEstudiantes</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-users fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-success shadow h-100 py-2 stat-card">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-success text-uppercase mb-1">Total Mediciones</div>
+                        <div class="h5 mb-0 fw-bold text-gray-800 counter" data-target="@Model.TotalMediciones">@Model.TotalMediciones</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-weight fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-info shadow h-100 py-2 stat-card">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-info text-uppercase mb-1">Mediciones Este Mes</div>
+                        <div class="h5 mb-0 fw-bold text-gray-800 counter" data-target="@Model.MedicionesEsteMes">@Model.MedicionesEsteMes</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-calendar-check fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-xl-3 col-md-6 mb-4">
+        <div class="card border-left-warning shadow h-100 py-2 stat-card">
+            <div class="card-body">
+                <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                        <div class="text-xs fw-bold text-warning text-uppercase mb-1">Establecimientos</div>
+                        <div class="h5 mb-0 fw-bold text-gray-800 counter" data-target="@Model.TotalEstablecimientos">@Model.TotalEstablecimientos</div>
+                    </div>
+                    <div class="col-auto">
+                        <i class="fas fa-school fa-2x text-gray-300"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Gráficos Principales *@
+<div class="row">
+    @* Gráfico de Distribución IMC *@
+    <div class="col-xl-6 col-lg-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 fw-bold text-primary">
+                    <i class="fas fa-chart-pie me-2"></i>Distribución por Categoría IMC
+                </h6>
+            </div>
+            <div class="card-body">
+                @if (Model.DistribucionIMC.Any())
+                {
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <canvas id="chartDistribucionIMC"></canvas>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="fas fa-chart-pie fa-3x mb-3"></i>
+                        <p>No hay datos de mediciones disponibles</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @* Gráfico de Estudiantes por Sexo *@
+    <div class="col-xl-6 col-lg-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3 d-flex justify-content-between align-items-center">
+                <h6 class="m-0 fw-bold text-primary">
+                    <i class="fas fa-venus-mars me-2"></i>Distribución por Sexo
+                </h6>
+            </div>
+            <div class="card-body">
+                @if (Model.EstudiantesMasculino > 0 || Model.EstudiantesFemenino > 0)
+                {
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <canvas id="chartSexo"></canvas>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="fas fa-venus-mars fa-3x mb-3"></i>
+                        <p>No hay estudiantes registrados</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row">
+    @* Gráfico de Mediciones por Mes *@
+    <div class="col-xl-8 col-lg-7 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 fw-bold text-primary">
+                    <i class="fas fa-chart-line me-2"></i>Mediciones por Mes (Últimos 6 meses)
+                </h6>
+            </div>
+            <div class="card-body">
+                @if (Model.MedicionesMensuales.Any())
+                {
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <canvas id="chartMedicionesMes"></canvas>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="fas fa-chart-line fa-3x mb-3"></i>
+                        <p>No hay mediciones en los últimos 6 meses</p>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+
+    @* Panel de Acciones Rápidas *@
+    <div class="col-xl-4 col-lg-5 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header py-3">
+                <h6 class="m-0 fw-bold text-primary">
+                    <i class="fas fa-bolt me-2"></i>Acciones Rápidas
+                </h6>
+            </div>
+            <div class="card-body">
+                <div class="d-grid gap-3">
+                    <a asp-controller="T_Estudiante" asp-action="Create" class="btn btn-primary btn-lg">
+                        <i class="fas fa-user-plus me-2"></i>Nuevo Estudiante
+                    </a>
+                    <a asp-controller="T_MedicionNutricional" asp-action="Create" class="btn btn-success btn-lg">
+                        <i class="fas fa-plus-circle me-2"></i>Nueva Medición
+                    </a>
+                    <a asp-controller="T_Estudiante" asp-action="Index" class="btn btn-info btn-lg">
+                        <i class="fas fa-search me-2"></i>Buscar Estudiante
+                    </a>
+                    <a asp-controller="T_MedicionNutricional" asp-action="Index" class="btn btn-warning btn-lg">
+                        <i class="fas fa-list-alt me-2"></i>Ver Mediciones
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Top Establecimientos - Solo para Admin *@
+@if (esAdministrador && Model.TopEstablecimientos.Any())
+{
+    <div class="row">
+        <div class="col-12 mb-4">
+            <div class="card shadow">
+                <div class="card-header py-3">
+                    <h6 class="m-0 fw-bold text-primary">
+                        <i class="fas fa-trophy me-2"></i>Top 5 Establecimientos con Más Mediciones
+                    </h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-container" style="position: relative; height: 300px;">
+                        <canvas id="chartTopEstablecimientos"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@* Tarjetas de Módulos *@
 <div class="row">
     <div class="col-md-6 col-lg-4 mb-4">
         <div class="card dashboard-card shadow h-100">
@@ -103,51 +300,249 @@
     @* FIN DE BLOQUE RESTRINGIDO *@
 </div>
 
-@* Estadísticas Rápidas *@
-<div class="row mt-2">
-    <div class="col-12">
-        <div class="card shadow">
-            <div class="card-header">
-                <h6 class="m-0 fw-bold text-gradient">
-                    <i class="fas fa-chart-bar me-2"></i>Accesos Rápidos
-                </h6>
-            </div>
-            <div class="card-body">
-                <div class="row text-center">
-                    <div class="col-6 col-md-3 mb-3 mb-md-0">
-                        <a asp-controller="T_Estudiante" asp-action="Create" class="text-decoration-none">
-                            <div class="p-3 rounded bg-light">
-                                <i class="fas fa-user-plus fa-2x text-primary mb-2"></i>
-                                <p class="mb-0 text-dark fw-semibold">Nuevo Estudiante</p>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-6 col-md-3 mb-3 mb-md-0">
-                        <a asp-controller="T_MedicionNutricional" asp-action="Create" class="text-decoration-none">
-                            <div class="p-3 rounded bg-light">
-                                <i class="fas fa-plus-circle fa-2x text-success mb-2"></i>
-                                <p class="mb-0 text-dark fw-semibold">Nueva Medición</p>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <a asp-controller="T_Estudiante" asp-action="Index" class="text-decoration-none">
-                            <div class="p-3 rounded bg-light">
-                                <i class="fas fa-search fa-2x text-info mb-2"></i>
-                                <p class="mb-0 text-dark fw-semibold">Buscar Estudiante</p>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-6 col-md-3">
-                        <a asp-controller="T_MedicionNutricional" asp-action="Index" class="text-decoration-none">
-                            <div class="p-3 rounded bg-light">
-                                <i class="fas fa-list-alt fa-2x text-warning mb-2"></i>
-                                <p class="mb-0 text-dark fw-semibold">Ver Mediciones</p>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Detectar tema oscuro
+            const isDarkMode = () => document.documentElement.getAttribute('data-bs-theme') === 'dark';
+            
+            // Colores adaptables al tema
+            const getTextColor = () => isDarkMode() ? '#e4e6eb' : '#5a5c69';
+            const getGridColor = () => isDarkMode() ? 'rgba(255,255,255,0.1)' : 'rgba(0,0,0,0.1)';
+
+            // Opciones comunes para los gráficos
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: {
+                            color: getTextColor()
+                        }
+                    }
+                }
+            };
+
+            // 1. Gráfico de Distribución IMC (Doughnut)
+            @if (Model.DistribucionIMC.Any())
+            {
+                <text>
+                const ctxIMC = document.getElementById('chartDistribucionIMC');
+                if (ctxIMC) {
+                    new Chart(ctxIMC, {
+                        type: 'doughnut',
+                        data: {
+                            labels: [@Html.Raw(string.Join(",", Model.DistribucionIMC.Select(c => $"'{c.Categoria}'")))],
+                            datasets: [{
+                                data: [@string.Join(",", Model.DistribucionIMC.Select(c => c.Cantidad))],
+                                backgroundColor: [@Html.Raw(string.Join(",", Model.DistribucionIMC.Select(c => $"'{c.Color}'")))],
+                                borderWidth: 2,
+                                borderColor: isDarkMode() ? '#1f2940' : '#fff'
+                            }]
+                        },
+                        options: {
+                            ...commonOptions,
+                            cutout: '60%',
+                            plugins: {
+                                ...commonOptions.plugins,
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        color: getTextColor(),
+                                        padding: 15,
+                                        usePointStyle: true
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                </text>
+            }
+
+            // 2. Gráfico de Estudiantes por Sexo (Pie)
+            @if (Model.EstudiantesMasculino > 0 || Model.EstudiantesFemenino > 0)
+            {
+                <text>
+                const ctxSexo = document.getElementById('chartSexo');
+                if (ctxSexo) {
+                    new Chart(ctxSexo, {
+                        type: 'pie',
+                        data: {
+                            labels: ['Masculino', 'Femenino'],
+                            datasets: [{
+                                data: [@Model.EstudiantesMasculino, @Model.EstudiantesFemenino],
+                                backgroundColor: ['#4e73df', '#e74a8a'],
+                                borderWidth: 2,
+                                borderColor: isDarkMode() ? '#1f2940' : '#fff'
+                            }]
+                        },
+                        options: {
+                            ...commonOptions,
+                            plugins: {
+                                ...commonOptions.plugins,
+                                legend: {
+                                    position: 'bottom',
+                                    labels: {
+                                        color: getTextColor(),
+                                        padding: 15,
+                                        usePointStyle: true
+                                    }
+                                }
+                            }
+                        }
+                    });
+                }
+                </text>
+            }
+
+            // 3. Gráfico de Mediciones por Mes (Line)
+            @if (Model.MedicionesMensuales.Any())
+            {
+                <text>
+                const ctxMes = document.getElementById('chartMedicionesMes');
+                if (ctxMes) {
+                    const gradient = ctxMes.getContext('2d').createLinearGradient(0, 0, 0, 300);
+                    gradient.addColorStop(0, 'rgba(102, 126, 234, 0.4)');
+                    gradient.addColorStop(1, 'rgba(102, 126, 234, 0)');
+
+                    new Chart(ctxMes, {
+                        type: 'line',
+                        data: {
+                            labels: [@Html.Raw(string.Join(",", Model.MedicionesMensuales.Select(m => $"'{m.Mes}'")))],
+                            datasets: [{
+                                label: 'Mediciones',
+                                data: [@string.Join(",", Model.MedicionesMensuales.Select(m => m.Cantidad))],
+                                borderColor: '#667eea',
+                                backgroundColor: gradient,
+                                tension: 0.4,
+                                fill: true,
+                                pointBackgroundColor: '#667eea',
+                                pointBorderColor: '#fff',
+                                pointBorderWidth: 2,
+                                pointRadius: 5,
+                                pointHoverRadius: 7
+                            }]
+                        },
+                        options: {
+                            ...commonOptions,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        color: getTextColor(),
+                                        stepSize: 1
+                                    },
+                                    grid: {
+                                        color: getGridColor()
+                                    }
+                                },
+                                x: {
+                                    ticks: {
+                                        color: getTextColor()
+                                    },
+                                    grid: {
+                                        color: getGridColor()
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+                }
+                </text>
+            }
+
+            // 4. Gráfico de Top Establecimientos (Bar)
+            @if (esAdministrador && Model.TopEstablecimientos.Any())
+            {
+                <text>
+                const ctxTop = document.getElementById('chartTopEstablecimientos');
+                if (ctxTop) {
+                    new Chart(ctxTop, {
+                        type: 'bar',
+                        data: {
+                            labels: [@Html.Raw(string.Join(",", Model.TopEstablecimientos.Select(e => $"'{(e.Nombre.Length > 25 ? e.Nombre.Substring(0, 25) + "..." : e.Nombre)}'")))],
+                            datasets: [{
+                                label: 'Mediciones',
+                                data: [@string.Join(",", Model.TopEstablecimientos.Select(e => e.CantidadMediciones))],
+                                backgroundColor: [
+                                    'rgba(102, 126, 234, 0.8)',
+                                    'rgba(17, 153, 142, 0.8)',
+                                    'rgba(245, 175, 25, 0.8)',
+                                    'rgba(255, 65, 108, 0.8)',
+                                    'rgba(79, 172, 254, 0.8)'
+                                ],
+                                borderColor: [
+                                    '#667eea',
+                                    '#11998e',
+                                    '#f5af19',
+                                    '#ff416c',
+                                    '#4facfe'
+                                ],
+                                borderWidth: 2,
+                                borderRadius: 8
+                            }]
+                        },
+                        options: {
+                            ...commonOptions,
+                            indexAxis: 'y',
+                            scales: {
+                                x: {
+                                    beginAtZero: true,
+                                    ticks: {
+                                        color: getTextColor(),
+                                        stepSize: 1
+                                    },
+                                    grid: {
+                                        color: getGridColor()
+                                    }
+                                },
+                                y: {
+                                    ticks: {
+                                        color: getTextColor()
+                                    },
+                                    grid: {
+                                        display: false
+                                    }
+                                }
+                            },
+                            plugins: {
+                                legend: {
+                                    display: false
+                                }
+                            }
+                        }
+                    });
+                }
+                </text>
+            }
+
+            // Animación de contadores
+            const counters = document.querySelectorAll('.counter');
+            counters.forEach(counter => {
+                const target = parseInt(counter.getAttribute('data-target'));
+                const duration = 1500;
+                const step = target / (duration / 16);
+                let current = 0;
+                
+                const updateCounter = () => {
+                    current += step;
+                    if (current < target) {
+                        counter.textContent = Math.ceil(current).toLocaleString('es-CL');
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        counter.textContent = target.toLocaleString('es-CL');
+                    }
+                };
+                
+                updateCounter();
+            });
+        });
+    </script>
+}

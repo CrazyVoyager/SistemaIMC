@@ -22,6 +22,12 @@ namespace SistemaIMC.Controllers
         private const int DOCENTE_ROL_ID = 2;
         private const string REFERENCIA_OMS = "Patrones OMS 5-19 años";
 
+        // Constantes para validación de rangos realistas
+        private const decimal PESO_MINIMO_KG = 10m;
+        private const decimal PESO_MAXIMO_KG = 150m;
+        private const decimal ESTATURA_MINIMA_CM = 80m;
+        private const decimal ESTATURA_MAXIMA_CM = 220m;
+
         public T_MedicionNutricionalController(TdDbContext context)
         {
             _context = context;
@@ -47,6 +53,81 @@ namespace SistemaIMC.Controllers
         private bool EsAdministrador()
         {
             return User.IsInRole("Administrador del Sistema");
+        }
+
+        /// <summary>
+        /// Valida que los valores de peso y estatura estén dentro de rangos realistas.
+        /// </summary>
+        private bool ValidarRangosMedicion(decimal peso, decimal estatura, out string mensajeError)
+        {
+            mensajeError = string.Empty;
+
+            if (peso < PESO_MINIMO_KG || peso > PESO_MAXIMO_KG)
+            {
+                mensajeError = $"El peso debe estar entre {PESO_MINIMO_KG} y {PESO_MAXIMO_KG} kg. Verifique el valor ingresado.";
+                return false;
+            }
+
+            if (estatura < ESTATURA_MINIMA_CM || estatura > ESTATURA_MAXIMA_CM)
+            {
+                mensajeError = $"La estatura debe estar entre {ESTATURA_MINIMA_CM} y {ESTATURA_MAXIMA_CM} cm. Verifique el valor ingresado.";
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Calcula la categoría IMC basada en el valor del IMC (clasificación de respaldo).
+        /// Se usa cuando el SP no asigna una categoría o como verificación adicional.
+        /// </summary>
+        private async Task<int?> ObtenerCategoriaIMCPorValor(decimal imc)
+        {
+            // Clasificación simplificada basada en IMC para adultos/adolescentes
+            // Nota: La clasificación real debería usar Z-Score según OMS para niños
+            string nombreCategoria;
+
+            if (imc < 16.0m)
+                nombreCategoria = "Bajo peso severo";
+            else if (imc < 17.0m)
+                nombreCategoria = "Bajo peso moderado";
+            else if (imc < 18.5m)
+                nombreCategoria = "Bajo peso";
+            else if (imc < 25.0m)
+                nombreCategoria = "Normal";
+            else if (imc < 30.0m)
+                nombreCategoria = "Sobrepeso";
+            else if (imc < 35.0m)
+                nombreCategoria = "Obesidad";
+            else
+                nombreCategoria = "Obesidad severa";
+
+            // Obtener la primera palabra para buscar coincidencias parciales
+            string palabraClave = nombreCategoria.Split(' ')[0].ToLower();
+
+            // Buscar la categoría en la base de datos - traemos todas y filtramos en memoria
+            var categorias = await _context.T_CategoriaIMCs.ToListAsync();
+            var categoria = categorias.FirstOrDefault(c => 
+                c.NombreCategoria.ToLower().Contains(palabraClave));
+
+            return categoria?.ID_CategoriaIMC;
+        }
+
+        /// <summary>
+        /// Aplica clasificación de respaldo si el SP no asignó una categoría.
+        /// </summary>
+        private async Task AplicarClasificacionRespaldo(int idMedicion, decimal imc)
+        {
+            var medicion = await _context.T_MedicionNutricional.FindAsync(idMedicion);
+            if (medicion != null && medicion.ID_CategoriaIMC == null)
+            {
+                var categoriaId = await ObtenerCategoriaIMCPorValor(imc);
+                if (categoriaId.HasValue)
+                {
+                    medicion.ID_CategoriaIMC = categoriaId.Value;
+                    await _context.SaveChangesAsync();
+                }
+            }
         }
 
         private void PopulateDropdowns(T_MedicionNutricional? medicion = null, int? establecimientoFiltro = null)
@@ -127,6 +208,14 @@ namespace SistemaIMC.Controllers
             var establecimientoUsuario = GetEstablecimientoUsuarioLogueado();
             var esAdmin = EsAdministrador();
 
+            // Validar rangos de peso y estatura antes de continuar
+            if (!ValidarRangosMedicion(t_MedicionNutricional.Peso_kg, t_MedicionNutricional.Estatura_cm, out string mensajeError))
+            {
+                ModelState.AddModelError(string.Empty, mensajeError);
+                PopulateDropdowns(t_MedicionNutricional, esAdmin ? null : establecimientoUsuario);
+                return View(t_MedicionNutricional);
+            }
+
             if (ModelState.IsValid)
             {
                 var estudiante = await _context.T_Estudiante.FindAsync(t_MedicionNutricional.ID_Estudiante);
@@ -152,13 +241,27 @@ namespace SistemaIMC.Controllers
                 _context.Add(t_MedicionNutricional);
                 await _context.SaveChangesAsync();
 
-                await _context.Database.ExecuteSqlRawAsync(
-                    "EXEC SP_ActualizarCategoriaIMC @ID_Medicion, @FechaMedicion, @FechaNacimiento, @ID_Sexo",
-                    new SqlParameter("@ID_Medicion", t_MedicionNutricional.ID_Medicion),
-                    new SqlParameter("@FechaMedicion", t_MedicionNutricional.FechaMedicion),
-                    new SqlParameter("@FechaNacimiento", estudiante.FechaNacimiento),
-                    new SqlParameter("@ID_Sexo", estudiante.ID_Sexo)
-                );
+                // Calcular IMC para usarlo en clasificación de respaldo
+                decimal imcCalculado = t_MedicionNutricional.IMC ?? 0;
+
+                try
+                {
+                    await _context.Database.ExecuteSqlRawAsync(
+                        "EXEC SP_ActualizarCategoriaIMC @ID_Medicion, @FechaMedicion, @FechaNacimiento, @ID_Sexo",
+                        new SqlParameter("@ID_Medicion", t_MedicionNutricional.ID_Medicion),
+                        new SqlParameter("@FechaMedicion", t_MedicionNutricional.FechaMedicion),
+                        new SqlParameter("@FechaNacimiento", estudiante.FechaNacimiento),
+                        new SqlParameter("@ID_Sexo", estudiante.ID_Sexo)
+                    );
+                }
+                catch (Exception ex)
+                {
+                    // Log del error pero continuamos con clasificación de respaldo
+                    System.Diagnostics.Debug.WriteLine($"Error en SP_ActualizarCategoriaIMC: {ex.Message}");
+                }
+
+                // Aplicar clasificación de respaldo si el SP no asignó categoría
+                await AplicarClasificacionRespaldo(t_MedicionNutricional.ID_Medicion, imcCalculado);
 
                 return RedirectToAction(nameof(Index));
             }
@@ -213,6 +316,14 @@ namespace SistemaIMC.Controllers
             var establecimientoUsuario = GetEstablecimientoUsuarioLogueado();
             var esAdmin = EsAdministrador();
 
+            // Validar rangos de peso y estatura antes de continuar
+            if (!ValidarRangosMedicion(t_MedicionNutricional.Peso_kg, t_MedicionNutricional.Estatura_cm, out string mensajeError))
+            {
+                ModelState.AddModelError(string.Empty, mensajeError);
+                PopulateDropdowns(t_MedicionNutricional, esAdmin ? null : establecimientoUsuario);
+                return View(t_MedicionNutricional);
+            }
+
             if (ModelState.IsValid)
             {
                 var estudiante = await _context.T_Estudiante.FindAsync(t_MedicionNutricional.ID_Estudiante);
@@ -234,23 +345,36 @@ namespace SistemaIMC.Controllers
                 t_MedicionNutricional.Edad_Meses_Medicion = 0;
                 t_MedicionNutricional.Referencia_Normativa = REFERENCIA_OMS;
 
+                // Calcular IMC para usarlo en clasificación de respaldo
+                decimal imcCalculado = t_MedicionNutricional.IMC ?? 0;
+
                 try
                 {
                     _context.Update(t_MedicionNutricional);
                     await _context.SaveChangesAsync();
 
                     await _context.Database.ExecuteSqlRawAsync(
-                    "EXEC SP_ActualizarCategoriaIMC @ID_Medicion, @FechaMedicion, @FechaNacimiento, @ID_Sexo",
-                    new SqlParameter("@ID_Medicion", t_MedicionNutricional.ID_Medicion),
-                    new SqlParameter("@FechaMedicion", t_MedicionNutricional.FechaMedicion),
-                    new SqlParameter("@FechaNacimiento", estudiante.FechaNacimiento),
-                    new SqlParameter("@ID_Sexo", estudiante.ID_Sexo)
-                );
+                        "EXEC SP_ActualizarCategoriaIMC @ID_Medicion, @FechaMedicion, @FechaNacimiento, @ID_Sexo",
+                        new SqlParameter("@ID_Medicion", t_MedicionNutricional.ID_Medicion),
+                        new SqlParameter("@FechaMedicion", t_MedicionNutricional.FechaMedicion),
+                        new SqlParameter("@FechaNacimiento", estudiante.FechaNacimiento),
+                        new SqlParameter("@ID_Sexo", estudiante.ID_Sexo)
+                    );
+
+                    // Aplicar clasificación de respaldo si el SP no asignó categoría
+                    await AplicarClasificacionRespaldo(t_MedicionNutricional.ID_Medicion, imcCalculado);
                 }
                 catch (DbUpdateConcurrencyException)
                 {
                     if (!T_MedicionNutricionalExists(t_MedicionNutricional.ID_Medicion)) return NotFound();
                     else throw;
+                }
+                catch (Exception ex)
+                {
+                    // Log del error del SP pero continuamos
+                    System.Diagnostics.Debug.WriteLine($"Error en SP_ActualizarCategoriaIMC: {ex.Message}");
+                    // Intentar clasificación de respaldo
+                    await AplicarClasificacionRespaldo(t_MedicionNutricional.ID_Medicion, imcCalculado);
                 }
                 return RedirectToAction(nameof(Index));
             }

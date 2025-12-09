@@ -1219,3 +1219,124 @@ body, .card, .card-header, .card-body, .table, .form-control, .form-select {
     border-color: #3d4f6f;
     color: #6c757d;
 }
+
+/* ========================================================== */
+/* ESTILOS PARA DASHBOARD Y GRÁFICOS - IMCinador             */
+/* ========================================================== */
+
+/* === Tarjetas de Estadísticas === */
+.stat-card {
+    border-left: 4px solid;
+    transition: var(--transition-smooth);
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.border-left-primary {
+    border-left-color: #667eea !important;
+}
+
+.border-left-success {
+    border-left-color: #11998e !important;
+}
+
+.border-left-info {
+    border-left-color: #4facfe !important;
+}
+
+.border-left-warning {
+    border-left-color: #f5af19 !important;
+}
+
+.text-xs {
+    font-size: 0.7rem;
+}
+
+.text-gray-300 {
+    color: #dddfeb !important;
+}
+
+.text-gray-800 {
+    color: #5a5c69 !important;
+}
+
+[data-bs-theme="dark"] .text-gray-800 {
+    color: #e4e6eb !important;
+}
+
+[data-bs-theme="dark"] .text-gray-300 {
+    color: #4a5568 !important;
+}
+
+/* === Contenedor de Gráficos === */
+.chart-container {
+    position: relative;
+    margin: auto;
+    width: 100%;
+}
+
+.chart-container canvas {
+    max-width: 100%;
+}
+
+/* === Animación para contadores === */
+.counter {
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
+}
+
+/* === Estilos responsivos para gráficos === */
+@media (max-width: 768px) {
+    .chart-container {
+        height: 250px !important;
+    }
+    
+    .stat-card .h5 {
+        font-size: 1.1rem;
+    }
+    
+    .stat-card .text-xs {
+        font-size: 0.65rem;
+    }
+    
+    .stat-card .fa-2x {
+        font-size: 1.5rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    .chart-container {
+        height: 200px !important;
+    }
+    
+    .stat-card .card-body {
+        padding: 0.75rem !important;
+    }
+    
+    .stat-card .h5 {
+        font-size: 1rem;
+    }
+}
+
+/* === Mejoras para modo oscuro en gráficos === */
+[data-bs-theme="dark"] .stat-card {
+    background-color: #1f2940;
+}
+
+[data-bs-theme="dark"] .border-left-primary {
+    border-left-color: #7c9bea !important;
+}
+
+[data-bs-theme="dark"] .border-left-success {
+    border-left-color: #38ef7d !important;
+}
+
+[data-bs-theme="dark"] .border-left-info {
+    border-left-color: #00f2fe !important;
+}
+
+[data-bs-theme="dark"] .border-left-warning {
+    border-left-color: #f5af19 !important;
+}
