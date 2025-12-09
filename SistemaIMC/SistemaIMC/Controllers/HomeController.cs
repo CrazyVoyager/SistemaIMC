@@ -129,23 +129,35 @@ namespace SistemaIMC.Controllers
                 viewModel.EstudiantesMasculino = await estudiantesQuery.CountAsync(e => e.ID_Sexo == 1);
                 viewModel.EstudiantesFemenino = await estudiantesQuery.CountAsync(e => e.ID_Sexo == 2);
 
-                // Top 5 establecimientos con más mediciones (solo para admin)
-                if (esAdmin)
+                // Top 5 cursos con más mediciones
+                // Para admin: muestra todos los cursos
+                // Para otros usuarios: muestra solo los cursos de su establecimiento
+                var cursosQuery = _context.T_MedicionNutricional
+                    .Include(m => m.Estudiante)
+                        .ThenInclude(e => e!.Curso)
+                    .Where(m => m.Estudiante != null && m.Estudiante.Curso != null);
+
+                // Filtrar por establecimiento si no es admin
+                if (!esAdmin && establecimientoUsuario.HasValue)
                 {
-                    viewModel.TopEstablecimientos = await _context.T_MedicionNutricional
-                        .Include(m => m.Estudiante)
-                            .ThenInclude(e => e!.Establecimiento)
-                        .Where(m => m.Estudiante != null && m.Estudiante.Establecimiento != null)
-                        .GroupBy(m => m.Estudiante!.Establecimiento!.NombreEstablecimiento)
-                        .Select(g => new EstablecimientoEstadistica
-                        {
-                            Nombre = g.Key,
-                            CantidadMediciones = g.Count()
-                        })
-                        .OrderByDescending(x => x.CantidadMediciones)
-                        .Take(5)
-                        .ToListAsync();
+                    cursosQuery = cursosQuery.Where(m => m.Estudiante!.ID_Establecimiento == establecimientoUsuario.Value);
+                    
+                    // Obtener nombre del establecimiento
+                    var establecimiento = await _context.T_Establecimientos
+                        .FirstOrDefaultAsync(e => e.ID_Establecimiento == establecimientoUsuario.Value);
+                    viewModel.NombreEstablecimiento = establecimiento?.NombreEstablecimiento;
                 }
+
+                viewModel.TopCursos = await cursosQuery
+                    .GroupBy(m => m.Estudiante!.Curso!.NombreCurso)
+                    .Select(g => new CursoEstadistica
+                    {
+                        NombreCurso = g.Key,
+                        CantidadMediciones = g.Count()
+                    })
+                    .OrderByDescending(x => x.CantidadMediciones)
+                    .Take(5)
+                    .ToListAsync();
             }
             catch (Exception ex)
             {

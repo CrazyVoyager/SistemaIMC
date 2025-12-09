@@ -21,26 +21,29 @@ namespace SistemaIMC.Models.ViewModels
         public int EstudiantesMasculino { get; set; }
         public int EstudiantesFemenino { get; set; }
 
-        // Datos para gráfico de mediciones por establecimiento (top 5)
-        public List<EstablecimientoEstadistica> TopEstablecimientos { get; set; } = [];
-    }
+        // Datos para gráfico de mediciones por curso (top 5)
+                public List<CursoEstadistica> TopCursos { get; set; } = [];
 
-    public class CategoriaIMCEstadistica
-    {
-        public string Categoria { get; set; } = string.Empty;
-        public int Cantidad { get; set; }
-        public string Color { get; set; } = string.Empty;
-    }
+                // Nombre del establecimiento (para usuarios no admin)
+                public string? NombreEstablecimiento { get; set; }
+            }
 
-    public class MedicionesPorMes
-    {
-        public string Mes { get; set; } = string.Empty;
-        public int Cantidad { get; set; }
-    }
+            public class CategoriaIMCEstadistica
+            {
+                public string Categoria { get; set; } = string.Empty;
+                public int Cantidad { get; set; }
+                public string Color { get; set; } = string.Empty;
+            }
 
-    public class EstablecimientoEstadistica
-    {
-        public string Nombre { get; set; } = string.Empty;
-        public int CantidadMediciones { get; set; }
-    }
-}
+            public class MedicionesPorMes
+            {
+                public string Mes { get; set; } = string.Empty;
+                public int Cantidad { get; set; }
+            }
+
+            public class CursoEstadistica
+            {
+                public string NombreCurso { get; set; } = string.Empty;
+                public int CantidadMediciones { get; set; }
+            }
+        }

@@ -208,20 +208,24 @@
     </div>
 </div>
 
-@* Top Establecimientos - Solo para Admin *@
-@if (esAdministrador && Model.TopEstablecimientos.Any())
+@* Top Cursos con más mediciones - Visible para todos *@
+@if (Model.TopCursos.Any())
 {
     <div class="row">
         <div class="col-12 mb-4">
             <div class="card shadow">
                 <div class="card-header py-3">
                     <h6 class="m-0 fw-bold text-primary">
-                        <i class="fas fa-trophy me-2"></i>Top 5 Establecimientos con Más Mediciones
+                        <i class="fas fa-trophy me-2"></i>Top 5 Cursos con Más Mediciones
+                        @if (!string.IsNullOrEmpty(Model.NombreEstablecimiento))
+                        {
+                            <span class="badge bg-info ms-2">@Model.NombreEstablecimiento</span>
+                        }
                     </h6>
                 </div>
                 <div class="card-body">
                     <div class="chart-container" style="position: relative; height: 300px;">
-                        <canvas id="chartTopEstablecimientos"></canvas>
+                        <canvas id="chartTopCursos"></canvas>
                     </div>
                 </div>
             </div>
@@ -458,19 +462,19 @@
                 </text>
             }
 
-            // 4. Gráfico de Top Establecimientos (Bar)
-            @if (esAdministrador && Model.TopEstablecimientos.Any())
+            // 4. Gráfico de Top Cursos (Bar)
+            @if (Model.TopCursos.Any())
             {
                 <text>
-                const ctxTop = document.getElementById('chartTopEstablecimientos');
+                const ctxTop = document.getElementById('chartTopCursos');
                 if (ctxTop) {
                     new Chart(ctxTop, {
                         type: 'bar',
                         data: {
-                            labels: [@Html.Raw(string.Join(",", Model.TopEstablecimientos.Select(e => $"'{(e.Nombre.Length > 25 ? e.Nombre.Substring(0, 25) + "..." : e.Nombre)}'")))],
+                            labels: [@Html.Raw(string.Join(",", Model.TopCursos.Select(c => $"'{(c.NombreCurso.Length > 25 ? c.NombreCurso.Substring(0, 25) + "..." : c.NombreCurso)}'")))],
                             datasets: [{
                                 label: 'Mediciones',
-                                data: [@string.Join(",", Model.TopEstablecimientos.Select(e => e.CantidadMediciones))],
+                                data: [@string.Join(",", Model.TopCursos.Select(c => c.CantidadMediciones))],
                                 backgroundColor: [
                                     'rgba(102, 126, 234, 0.8)',
                                     'rgba(17, 153, 142, 0.8)',
