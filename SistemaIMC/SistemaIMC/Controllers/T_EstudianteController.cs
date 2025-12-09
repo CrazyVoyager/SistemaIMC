@@ -457,12 +457,12 @@ namespace SistemaIMC.Controllers
         [Authorize(Roles = "Administrador del Sistema, Supervisor / Director de la Entidad, Profesor / Encargado de Mediciones")]
         public async Task<IActionResult> DescargarFicha(int id)
         {
-            // 1. Buscar al estudiante con todos sus datos relacionados
+            // 1. Buscar al estudiante
             var estudiante = await _context.T_Estudiante
                 .Include(e => e.Sexo)
                 .Include(e => e.Curso)
                 .Include(e => e.Establecimiento)
-                    .ThenInclude(est => est.Comuna) // Importante para mostrar la comuna en la ficha
+                    .ThenInclude(est => est.Comuna)
                 .FirstOrDefaultAsync(m => m.ID_Estudiante == id);
 
             if (estudiante == null)
@@ -470,20 +470,27 @@ namespace SistemaIMC.Controllers
                 return NotFound();
             }
 
-            // 2. Seguridad: Verificar que el usuario tenga permiso para ver a ESTE alumno
-            // (Reutilizando tu lógica de seguridad existente)
+            // 2. Seguridad (Mismo bloque que tenías)
             var establecimientoUsuario = GetEstablecimientoUsuarioLogueado();
             var esAdmin = EsAdministrador();
 
             if (!esAdmin && establecimientoUsuario.HasValue && estudiante.ID_Establecimiento != establecimientoUsuario.Value)
             {
-                return Forbid(); // El profesor intentó descargar ficha de otro colegio
+                return Forbid();
             }
 
-            // 3. Generar el PDF usando la plantilla individual
-            var pdfBytes = SistemaIMC.Services.PdfExportService.ExportarFichaEstudiante(estudiante);
+            // --- NUEVO BLOQUE: Buscar mediciones ---
+            // Buscamos las mediciones asociadas al estudiante, incluimos la categoría IMC y ordenamos por fecha descendente
+            var mediciones = await _context.T_MedicionNutricional // Asegúrate que tu DbSet se llame así en TdDbContext
+                .Where(m => m.ID_Estudiante == id)
+                .Include(m => m.CategoriaIMC) // Incluimos esto para mostrar el nombre del estado (ej: Obesidad)
+                .OrderByDescending(m => m.FechaMedicion) // Ordenadas de la más reciente a la más antigua
+                .ToListAsync();
 
-            // 4. Descargar con nombre personalizado (Ej: "Ficha_Luis_Hernandez.pdf")
+            // 3. Generar el PDF enviando AMBOS datos (Estudiante y Mediciones)
+            // Nota: Deberás actualizar la llamada al servicio aquí
+            var pdfBytes = SistemaIMC.Services.PdfExportService.ExportarFichaEstudiante(estudiante, mediciones);
+
             string nombreArchivo = $"Ficha_{estudiante.NombreCompleto.Replace(" ", "_")}.pdf";
             return File(pdfBytes, "application/pdf", nombreArchivo);
         }
