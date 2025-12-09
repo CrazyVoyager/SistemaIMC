@@ -8,7 +8,7 @@ namespace SistemaIMC.Models
     {
         [Key]
         public int ID_Region { get; set; }
-        public string NombreRegion { get; set; }
+        public string NombreRegion { get; set; } = string.Empty;
 
         // Propiedad de navegación
         [ForeignKey("ID_Region")]

@@ -59,7 +59,9 @@ namespace SistemaIMC.Controllers
                 new Claim(ClaimTypes.Name, usuario.Nombre),
                 new Claim(ClaimTypes.Email, usuario.CorreoElectronico),
                 // Asignamos el nombre del rol como el Claim de Rol
-                new Claim(ClaimTypes.Role, usuario.Rol?.NombreRol ?? "UsuarioGeneral")
+                new Claim(ClaimTypes.Role, usuario.Rol?.NombreRol ?? "UsuarioGeneral"),
+                // Agregamos el ID del establecimiento como claim para filtrar datos por liceo
+                new Claim("ID_Establecimiento", usuario.ID_Establecimiento?.ToString() ?? "")
             };
 
             var claimsIdentity = new ClaimsIdentity(

@@ -9,61 +9,85 @@
 }
 
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-users me-2"></i>Usuarios</h1>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <h1 class="h3 mb-0">
+            <i class="fas fa-users me-2 text-gradient"></i>Usuarios del Sistema
+        </h1>
         <a asp-action="Create" class="btn btn-primary">
-            <i class="fas fa-plus me-1"></i> Nuevo Usuario
+            <i class="fas fa-user-plus me-1"></i> Nuevo Usuario
         </a>
     </div>
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Lista de Usuarios</h6>
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 fw-bold text-primary">
+                <i class="fas fa-list me-2"></i>Lista de Usuarios
+            </h6>
+            @if (Model != null && Model.Any())
+            {
+                <span class="badge bg-primary">@Model.Count registros</span>
+            }
         </div>
         <div class="card-body">
             @if (Model != null && Model.Any())
             {
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover" width="100%" cellspacing="0">
-                        <thead class="table-light">
+                        <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>RUT</th>
+                                <th style="width: 50px;">ID</th>
+                                <th style="width: 120px;">RUT</th>
                                 <th>Nombre</th>
                                 <th>Correo Electrónico</th>
-                                <th>Rol</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
+                                <th style="width: 180px;">Rol</th>
+                                <th style="width: 90px;">Estado</th>
+                                <th style="width: 130px;">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var usuario in Model)
                             {
                                 <tr>
-                                    <td>@usuario.ID_Usuario</td>
-                                    <td>@usuario.RUT</td>
-                                    <td>@usuario.Nombre</td>
-                                    <td>@usuario.CorreoElectronico</td>
-                                    <td>@usuario.Rol?.NombreRol</td>
+                                    <td class="text-center fw-bold">@usuario.ID_Usuario</td>
                                     <td>
+                                        <span class="badge bg-light text-dark border">
+                                            <i class="fas fa-id-card me-1"></i>@usuario.RUT
+                                        </span>
+                                    </td>
+                                    <td class="fw-semibold">
+                                        <i class="fas fa-user me-1 text-muted"></i>@usuario.Nombre
+                                    </td>
+                                    <td>
+                                        <a href="mailto:@usuario.CorreoElectronico" class="text-decoration-none">
+                                            <i class="fas fa-envelope me-1"></i>@usuario.CorreoElectronico
+                                        </a>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-primary">@usuario.Rol?.NombreRol</span>
+                                    </td>
+                                    <td class="text-center">
                                         @if (usuario.EstadoRegistro)
                                         {
-                                            <span class="badge bg-success">Activo</span>
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check me-1"></i>Activo
+                                            </span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-danger">Inactivo</span>
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-times me-1"></i>Inactivo
+                                            </span>
                                         }
                                     </td>
                                     <td>
-                                        <div class="btn-group" role="group">
+                                        <div class="btn-group btn-group-sm" role="group">
                                             <a asp-action="Edit" asp-route-id="@usuario.ID_Usuario"
-                                               class="btn btn-warning btn-sm">
-                                                <i class="fas fa-edit"></i> Editar
+                                               class="btn btn-warning" title="Editar">
+                                                <i class="fas fa-edit"></i>
                                             </a>
                                             <a asp-action="Delete" asp-route-id="@usuario.ID_Usuario"
-                                               class="btn btn-danger btn-sm">
-                                                <i class="fas fa-trash"></i> Eliminar
+                                               class="btn btn-danger" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
                                             </a>
                                         </div>
                                     </td>
@@ -75,12 +99,12 @@
             }
             else
             {
-                <div class="text-center py-4">
-                    <i class="fas fa-users fa-3x text-gray-300 mb-3"></i>
-                    <h5 class="text-gray-500">No hay usuarios registrados</h5>
-                    <p class="text-gray-500">Comienza agregando un nuevo usuario.</p>
+                <div class="empty-state">
+                    <i class="fas fa-users"></i>
+                    <h5>No hay usuarios registrados</h5>
+                    <p>Comienza agregando un nuevo usuario al sistema.</p>
                     <a asp-action="Create" class="btn btn-primary">
-                        <i class="fas fa-plus me-1"></i> Crear Primer Usuario
+                        <i class="fas fa-user-plus me-1"></i> Crear Primer Usuario
                     </a>
                 </div>
             }

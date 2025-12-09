@@ -146,9 +146,15 @@ namespace SistemaIMC.Controllers
             var t_Region = await _context.T_Region.FindAsync(id);
             if (t_Region != null)
             {
+                // Verificar si hay comunas asociadas
+                bool tieneComunas = await _context.T_Comunas.AnyAsync(c => c.ID_Region == id);
+                if (tieneComunas)
+                {
+                    ModelState.AddModelError("", "No se puede eliminar la región porque tiene comunas asociadas.");
+                    return View(t_Region);
+                }
                 _context.T_Region.Remove(t_Region);
             }
-
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }

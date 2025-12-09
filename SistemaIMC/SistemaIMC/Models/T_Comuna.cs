@@ -8,7 +8,7 @@ namespace SistemaIMC.Models
     {
         [Key]
         public int ID_Comuna { get; set; }
-        public string NombreComuna { get; set; }
+        public string NombreComuna { get; set; } = string.Empty;
         public int ID_Region { get; set; }
 
         // Propiedad de navegación

@@ -1,6 +1,7 @@
 ﻿@model SistemaIMC.Models.T_Estudiante
 @{
     ViewData["Title"] = "Crear Estudiante";
+    var mostrarFiltrosGeograficos = ViewBag.MostrarFiltrosGeograficos as bool? ?? true;
 }
 
 <div class="row justify-content-center">
@@ -38,37 +39,58 @@
                         </div>
                     </div>
 
-                    <!-- Cadena dependiente Región > Comuna > Establecimiento > Curso -->
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label for="ddlRegion" class="form-label">Región</label>
-                            <select id="ddlRegion" class="form-select" asp-items="ViewBag.RegionId" required>
-                                <option value="">Seleccione Región</option>
-                            </select>
+                    @if (mostrarFiltrosGeograficos)
+                    {
+                        <!-- Cadena dependiente Región > Comuna > Establecimiento > Curso (Solo para Administrador) -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="ddlRegion" class="form-label">Región</label>
+                                <select id="ddlRegion" class="form-select" asp-items="ViewBag.RegionId" required>
+                                    <option value="">Seleccione Región</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="ddlComuna" class="form-label">Comuna</label>
+                                <select id="ddlComuna" class="form-select" asp-items="ViewBag.Comunas" required disabled>
+                                    <option value="">Seleccione Comuna</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label for="ddlComuna" class="form-label">Comuna</label>
-                            <select id="ddlComuna" class="form-select" asp-items="ViewBag.Comunas" required disabled>
-                                <option value="">Seleccione Comuna</option>
-                            </select>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ID_Establecimiento" class="form-label">Establecimiento</label>
+                                <select asp-for="ID_Establecimiento" id="ddlEstablecimiento" class="form-select" asp-items="ViewBag.ID_Establecimiento" required disabled>
+                                    <option value="">Seleccione Establecimiento</option>
+                                </select>
+                                <span asp-validation-for="ID_Establecimiento" class="text-danger small"></span>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ID_Curso" class="form-label">Curso</label>
+                                <select asp-for="ID_Curso" id="ddlCurso" class="form-select" asp-items="ViewBag.ID_Curso" required disabled>
+                                    <option value="">Seleccione Curso</option>
+                                </select>
+                                <span asp-validation-for="ID_Curso" class="text-danger small"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="ID_Establecimiento" class="form-label">Establecimiento</label>
-                            <select asp-for="ID_Establecimiento" id="ddlEstablecimiento" class="form-select" asp-items="ViewBag.ID_Establecimiento" required disabled>
-                                <option value="">Seleccione Establecimiento</option>
-                            </select>
-                            <span asp-validation-for="ID_Establecimiento" class="text-danger small"></span>
+                    }
+                    else
+                    {
+                        <!-- Vista simplificada para Profesor: Establecimiento fijo y solo seleccionar Curso -->
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Establecimiento</label>
+                                <input type="text" class="form-control" value="@ViewBag.NombreEstablecimiento" readonly disabled />
+                                <select asp-for="ID_Establecimiento" asp-items="ViewBag.ID_Establecimiento" class="d-none"></select>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label asp-for="ID_Curso" class="form-label">Curso</label>
+                                <select asp-for="ID_Curso" class="form-select" asp-items="ViewBag.ID_Curso" required>
+                                    <option value="">Seleccione Curso</option>
+                                </select>
+                                <span asp-validation-for="ID_Curso" class="text-danger small"></span>
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label asp-for="ID_Curso" class="form-label">Curso</label>
-                            <select asp-for="ID_Curso" id="ddlCurso" class="form-select" asp-items="ViewBag.ID_Curso" required disabled>
-                                <option value="">Seleccione Curso</option>
-                            </select>
-                            <span asp-validation-for="ID_Curso" class="text-danger small"></span>
-                        </div>
-                    </div>
+                    }
                     <div class="mb-3">
                         <label asp-for="EstadoRegistro" class="form-label">Estado</label>
                         <select asp-for="EstadoRegistro" class="form-select" required>
@@ -92,7 +114,10 @@
 </div>
 
 @section Scripts {
-    <script src="~/js/createEstudiantes.js"></script>
+    @if (mostrarFiltrosGeograficos)
+    {
+        <script src="~/js/createEstudiantes.js"></script>
+    }
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }

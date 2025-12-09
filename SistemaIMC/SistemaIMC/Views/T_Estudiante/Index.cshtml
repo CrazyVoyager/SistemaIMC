@@ -12,163 +12,200 @@
 @model List<SistemaIMC.Models.T_Estudiante>
 
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-user-graduate me-2"></i>Estudiantes</h1>
-
-        @* BOTÓN CREAR: Solo visible si tiene permisos *@
-        @if (puedeEditar)
-        {
-            <a asp-action="Create" class="btn btn-primary">
-                <i class="fas fa-plus me-1"></i> Nuevo Estudiante
-            </a>
-        }
-
-        <!-- Botón simple sin parámetros -->
-        <button type="button" class="btn btn-success" onclick="exportarAExcel('ExportarEstudiantes', 'T_Estudiante')">
-            <i class="bi bi-file-earmark-excel"></i> Exportar a Excel
-        </button>
-
-        <!-- O botón que mantiene los filtros actuales -->
-        <button type="button" class="btn btn-success" onclick="exportarConFiltros('ExportarEstudiantes', 'T_Estudiante')">
-            <i class="bi bi-file-earmark-excel"></i> Exportar a Excel con Filtros
-        </button>
+    @* Header con título y botones de acción *@
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <h1 class="h3 mb-0 text-gray-800">
+            <i class="fas fa-user-graduate me-2 text-gradient"></i>Estudiantes
+        </h1>
+        <div class="d-flex flex-wrap gap-2">
+            @if (puedeEditar)
+            {
+                <a asp-action="Create" class="btn btn-primary">
+                    <i class="fas fa-plus me-1"></i> Nuevo Estudiante
+                </a>
+            }
+            <button type="button" class="btn btn-success" onclick="exportarConFiltros('ExportarEstudiantes', 'T_Estudiante')">
+                <i class="fas fa-file-excel me-1"></i> Exportar Excel
+            </button>
+        </div>
     </div>
-    <form asp-action="Index" method="get" class="mb-4" id="formFiltros">
-        <div class="card shadow">
-            <div class="row mb-3">
-                <div class="col-md-12">
-                    <label for="searchRut" class="form-label fw-bold text-primary">Buscar por RUT</label>
-                    <div class="input-group">
-                        <span class="input-group-text"><i class="fas fa-search"></i></span>
-                        <input type="text" name="searchRut" id="searchRut"
-                               class="form-control rut-input"
-                               placeholder="Ingrese RUT del estudiante (ej: 12.345.678-9)"
-                               value="@ViewData["CurrentFilterRut"]"
-                               maxlength="12">
+
+    @* Card de Filtros *@
+    <div class="card filter-card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 fw-bold">
+                <i class="fas fa-filter me-2"></i>Filtros de Búsqueda
+            </h6>
+        </div>
+        <div class="card-body">
+            <form asp-action="Index" method="get" id="formFiltros">
+                @* Búsqueda por RUT *@
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <label for="searchRut" class="form-label fw-bold">
+                            <i class="fas fa-id-card me-1 text-primary"></i>Buscar por RUT
+                        </label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="fas fa-search"></i></span>
+                            <input type="text" name="searchRut" id="searchRut"
+                                   class="form-control rut-input"
+                                   placeholder="Ingrese RUT del estudiante (ej: 12345678-9)"
+                                   value="@ViewData["CurrentFilterRut"]"
+                                   maxlength="12">
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Filtro Geográfico y Curricular</h6>
-            </div>
-            <div class="card-body">
+
+                @* Filtros Geográficos *@
                 <div class="row">
                     <div class="col-md-3 mb-3">
-                        <label for="ddlRegion" class="form-label">Región</label>
-                        <select name="RegionId" id="ddlRegion" class="form-select form-control" asp-items="ViewBag.RegionId">
+                        <label for="ddlRegion" class="form-label">
+                            <i class="fas fa-map me-1"></i>Región
+                        </label>
+                        <select name="RegionId" id="ddlRegion" class="form-select" asp-items="ViewBag.RegionId">
                             <option value="">Todas las Regiones</option>
                         </select>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <label for="ddlComuna" class="form-label">Comuna</label>
-                        <select name="ComunaId" id="ddlComuna" class="form-select form-control" asp-items="ViewBag.Comunas" disabled>
+                        <label for="ddlComuna" class="form-label">
+                            <i class="fas fa-map-marker-alt me-1"></i>Comuna
+                        </label>
+                        <select name="ComunaId" id="ddlComuna" class="form-select" asp-items="ViewBag.Comunas" disabled>
                             <option value="">Todas las Comunas</option>
                         </select>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <label for="ddlEstablecimiento" class="form-label">Establecimiento</label>
-                        <select name="EstablecimientoId" id="ddlEstablecimiento" class="form-select form-control" asp-items="ViewBag.Establecimientos" disabled>
-                            <option value="">Todos los Establecimientos</option>
+                        <label for="ddlEstablecimiento" class="form-label">
+                            <i class="fas fa-school me-1"></i>Establecimiento
+                        </label>
+                        <select name="EstablecimientoId" id="ddlEstablecimiento" class="form-select" asp-items="ViewBag.Establecimientos" disabled>
+                            <option value="">Todos</option>
                         </select>
                     </div>
                     <div class="col-md-3 mb-3">
-                        <label for="ddlCurso" class="form-label">Curso</label>
-                        <select name="CursoId" id="ddlCurso" class="form-select form-control" asp-items="ViewBag.Cursos" disabled>
+                        <label for="ddlCurso" class="form-label">
+                            <i class="fas fa-chalkboard me-1"></i>Curso
+                        </label>
+                        <select name="CursoId" id="ddlCurso" class="form-select" asp-items="ViewBag.Cursos" disabled>
                             <option value="">Todos los Cursos</option>
                         </select>
                     </div>
                 </div>
+
+                @* Botones de acción del filtro *@
                 <div class="row">
-                    <div class="col-md-2">
-                        <button type="submit" class="btn btn-info w-100">
-                            <i class="fas fa-filter me-1"></i> Aplicar Filtro
-                        </button>
-                    </div>
-                    <div class="col-md-2">
-                        <a asp-action="Index" class="btn btn-secondary w-100">
-                            <i class="fas fa-undo me-1"></i> Limpiar Filtros
-                        </a>
+                    <div class="col-12">
+                        <div class="d-flex gap-2">
+                            <button type="submit" class="btn btn-info">
+                                <i class="fas fa-search me-1"></i> Buscar
+                            </button>
+                            <a asp-action="Index" class="btn btn-secondary">
+                                <i class="fas fa-undo me-1"></i> Limpiar
+                            </a>
+                        </div>
                     </div>
                 </div>
-            </div>
+            </form>
         </div>
-    </form>
+    </div>
+
+    @* Tabla de Estudiantes *@
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Lista de Estudiantes</h6>
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 fw-bold text-primary">
+                <i class="fas fa-list me-2"></i>Lista de Estudiantes
+            </h6>
+            @if (Model != null && Model.Any())
+            {
+                <span class="badge bg-primary">@Model.Count registros</span>
+            }
         </div>
         <div class="card-body">
             @if (Model != null && Model.Any())
             {
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover" width="100%" cellspacing="0">
-                        <thead class="table-light">
+                        <thead>
                             <tr>
-                                <th>ID</th>
-                                <th>RUT</th>
+                                <th style="width: 50px;">ID</th>
+                                <th style="width: 120px;">RUT</th>
                                 <th>Nombre Completo</th>
-                                <th>Fecha Nacimiento</th>
-                                <th>Sexo</th>
+                                <th style="width: 110px;">F. Nacimiento</th>
+                                <th style="width: 80px;">Sexo</th>
                                 <th>Establecimiento</th>
-                                <th>Curso</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
+                                <th style="width: 100px;">Curso</th>
+                                <th style="width: 80px;">Estado</th>
+                                <th style="width: 150px;">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var estudiante in Model)
                             {
                                 <tr>
-                                    <td>@estudiante.ID_Estudiante</td>
+                                    <td class="text-center fw-bold">@estudiante.ID_Estudiante</td>
                                     <td>
                                         <span class="badge bg-light text-dark border">
-                                            @(estudiante.RUT ?? "Sin RUT")
+                                            <i class="fas fa-id-card me-1"></i>@(estudiante.RUT ?? "Sin RUT")
                                         </span>
                                     </td>
-                                    <td>@estudiante.NombreCompleto</td>
-                                    <td>@estudiante.FechaNacimiento.ToString("dd-MM-yyyy")</td>
-                                    <td>@(estudiante.Sexo?.Sexo ?? "N/A")</td>
-                                    <td>@(estudiante.Establecimiento?.NombreEstablecimiento ?? "N/A")</td>
-                                    <td>@(estudiante.Curso?.NombreCurso ?? "N/A")</td>
-                                    <td>
-                                        @if (estudiante.EstadoRegistro)
+                                    <td class="fw-semibold">@estudiante.NombreCompleto</td>
+                                    <td class="text-center">
+                                        <small>@estudiante.FechaNacimiento.ToString("dd/MM/yyyy")</small>
+                                    </td>
+                                    <td class="text-center">
+                                        @if (estudiante.Sexo?.Sexo == "Masculino" || estudiante.Sexo?.Sexo == "M")
                                         {
-                                            <span class="badge bg-success">Activo</span>
+                                            <i class="fas fa-mars text-info" title="Masculino"></i>
+                                        }
+                                        else if (estudiante.Sexo?.Sexo == "Femenino" || estudiante.Sexo?.Sexo == "F")
+                                        {
+                                            <i class="fas fa-venus text-danger" title="Femenino"></i>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-danger">Inactivo</span>
+                                            <span class="text-muted">@(estudiante.Sexo?.Sexo ?? "N/A")</span>
+                                        }
+                                    </td>
+                                    <td><small>@(estudiante.Establecimiento?.NombreEstablecimiento ?? "N/A")</small></td>
+                                    <td class="text-center">
+                                        <span class="badge bg-info">@(estudiante.Curso?.NombreCurso ?? "N/A")</span>
+                                    </td>
+                                    <td class="text-center">
+                                        @if (estudiante.EstadoRegistro)
+                                        {
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check me-1"></i>Activo
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-times me-1"></i>Inactivo
+                                            </span>
                                         }
                                     </td>
                                     <td>
-                                        <div class="btn-group" role="group">
-                                            @* BOTÓN DETALLES: Visible para TODOS (Incluido Director) *@
+                                        <div class="btn-group btn-group-sm" role="group">
                                             <a asp-action="Details" asp-route-id="@estudiante.ID_Estudiante"
-                                               class="btn btn-info btn-sm"
-                                               title="Ver Detalles del Estudiante">
-                                                <i class="fas fa-info-circle"></i>
+                                               class="btn btn-info" title="Ver Detalles">
+                                                <i class="fas fa-eye"></i>
                                             </a>
-
                                             <a href="#"
                                                data-estudiante-id="@estudiante.ID_Estudiante"
-                                               class="btn btn-success btn-sm btn-historial-modal"
-                                               title="Ver Historial de Mediciones Nutricionales"
+                                               class="btn btn-success btn-historial-modal"
+                                               title="Historial de Mediciones"
                                                data-bs-toggle="modal"
                                                data-bs-target="#historialModal">
                                                 <i class="fas fa-chart-line"></i>
                                             </a>
-
-                                            @* BOTONES EDICIÓN: Solo Admin y Profesor *@
                                             @if (puedeEditar)
                                             {
                                                 <a asp-action="Edit" asp-route-id="@estudiante.ID_Estudiante"
-                                                   class="btn btn-warning btn-sm"
-                                                   title="Editar Estudiante">
+                                                   class="btn btn-warning" title="Editar">
                                                     <i class="fas fa-edit"></i>
                                                 </a>
                                                 <a asp-action="Delete" asp-route-id="@estudiante.ID_Estudiante"
-                                                   class="btn btn-danger btn-sm"
-                                                   title="Eliminar Estudiante">
+                                                   class="btn btn-danger" title="Eliminar">
                                                     <i class="fas fa-trash"></i>
                                                 </a>
                                             }
@@ -182,42 +219,44 @@
             }
             else
             {
-                <div class="text-center py-4">
-                    <i class="fas fa-user-graduate fa-3x text-gray-300 mb-3"></i>
-                    <h5 class="text-gray-500">No hay estudiantes registrados</h5>
-
+                <div class="empty-state">
+                    <i class="fas fa-user-graduate"></i>
+                    <h5>No hay estudiantes registrados</h5>
                     @if (puedeEditar)
                     {
-                        <p class="text-gray-500">Comienza agregando un nuevo estudiante.</p>
+                        <p>Comienza agregando un nuevo estudiante al sistema.</p>
                         <a asp-action="Create" class="btn btn-primary">
                             <i class="fas fa-plus me-1"></i> Crear Primer Estudiante
                         </a>
                     }
                     else
                     {
-                        <p class="text-gray-500">No hay registros disponibles para visualizar.</p>
+                        <p>No hay registros disponibles para visualizar.</p>
                     }
                 </div>
             }
         </div>
     </div>
 </div>
+
+@* Modal para Historial *@
 <div class="modal fade" id="historialModal" tabindex="-1" aria-labelledby="historialModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-xl modal-dialog-centered">
         <div class="modal-content">
-            <div class="modal-body text-center">
-                <div class="spinner-border text-primary" role="status">
+            <div class="modal-body text-center p-5">
+                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
                     <span class="visually-hidden">Cargando...</span>
                 </div>
-                <p class="mt-2">Cargando historial de mediciones...</p>
+                <p class="mt-3 text-muted">Cargando historial de mediciones...</p>
             </div>
         </div>
     </div>
 </div>
+
 @section Scripts {
+    <script src="~/js/historialModal.js"></script>
+    <script src="~/js/filtrosBusqueda.js"></script>
     @{
-        <script src="~/js/historialModal.js"></script>
-        <script src="~/js/filtrosBusqueda.js"></script>
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
 }

@@ -9,59 +9,78 @@
 }
 
 <div class="container-fluid">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h1 class="h3 mb-0 text-gray-800"><i class="fas fa-school me-2"></i>Establecimientos</h1>
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-4">
+        <h1 class="h3 mb-0">
+            <i class="fas fa-school me-2 text-gradient"></i>Establecimientos
+        </h1>
         <a asp-action="Create" class="btn btn-primary">
             <i class="fas fa-plus me-1"></i> Nuevo Establecimiento
         </a>
     </div>
 
     <div class="card shadow mb-4">
-        <div class="card-header py-3">
-            <h6 class="m-0 font-weight-bold text-primary">Lista de Establecimientos</h6>
+        <div class="card-header py-3 d-flex justify-content-between align-items-center">
+            <h6 class="m-0 fw-bold text-primary">
+                <i class="fas fa-list me-2"></i>Lista de Establecimientos
+            </h6>
+            @if (Model != null && Model.Any())
+            {
+                <span class="badge bg-primary">@Model.Count registros</span>
+            }
         </div>
         <div class="card-body">
             @if (Model != null && Model.Any())
             {
                 <div class="table-responsive">
                     <table class="table table-bordered table-hover" width="100%" cellspacing="0">
-                        <thead class="table-light">
+                        <thead>
                             <tr>
-                                <th>ID</th>
+                                <th style="width: 50px;">ID</th>
                                 <th>Nombre del Establecimiento</th>
-                                <th>Direccion</th>
-                                <th>Comuna</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
+                                <th>Dirección</th>
+                                <th style="width: 150px;">Comuna</th>
+                                <th style="width: 90px;">Estado</th>
+                                <th style="width: 130px;">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach (var establecimiento in Model)
                             {
                                 <tr>
-                                    <td>@establecimiento.ID_Establecimiento</td>
-                                    <td>@establecimiento.NombreEstablecimiento</td>
-                                    <td>@establecimiento.Direccion</td>
-                                    <td>@establecimiento.Comuna?.NombreComuna</td>
+                                    <td class="text-center fw-bold">@establecimiento.ID_Establecimiento</td>
+                                    <td class="fw-semibold">
+                                        <i class="fas fa-building me-1 text-muted"></i>@establecimiento.NombreEstablecimiento
+                                    </td>
                                     <td>
+                                        <i class="fas fa-map-marker-alt me-1 text-muted"></i>
+                                        <small>@establecimiento.Direccion</small>
+                                    </td>
+                                    <td>
+                                        <span class="badge bg-info">@establecimiento.Comuna?.NombreComuna</span>
+                                    </td>
+                                    <td class="text-center">
                                         @if (establecimiento.EstadoRegistro)
                                         {
-                                            <span class="badge bg-success">Activo</span>
+                                            <span class="badge bg-success">
+                                                <i class="fas fa-check me-1"></i>Activo
+                                            </span>
                                         }
                                         else
                                         {
-                                            <span class="badge bg-danger">Inactivo</span>
+                                            <span class="badge bg-danger">
+                                                <i class="fas fa-times me-1"></i>Inactivo
+                                            </span>
                                         }
                                     </td>
                                     <td>
-                                        <div class="btn-group" role="group">
+                                        <div class="btn-group btn-group-sm" role="group">
                                             <a asp-action="Edit" asp-route-id="@establecimiento.ID_Establecimiento"
-                                               class="btn btn-warning btn-sm">
-                                                <i class="fas fa-edit"></i> Editar
+                                               class="btn btn-warning" title="Editar">
+                                                <i class="fas fa-edit"></i>
                                             </a>
                                             <a asp-action="Delete" asp-route-id="@establecimiento.ID_Establecimiento"
-                                               class="btn btn-danger btn-sm">
-                                                <i class="fas fa-trash"></i> Eliminar
+                                               class="btn btn-danger" title="Eliminar">
+                                                <i class="fas fa-trash"></i>
                                             </a>
                                         </div>
                                     </td>
@@ -73,10 +92,10 @@
             }
             else
             {
-                <div class="text-center py-4">
-                    <i class="fas fa-school fa-3x text-gray-300 mb-3"></i>
-                    <h5 class="text-gray-500">No hay establecimientos registrados</h5>
-                    <p class="text-gray-500">Comienza agregando un nuevo establecimiento.</p>
+                <div class="empty-state">
+                    <i class="fas fa-school"></i>
+                    <h5>No hay establecimientos registrados</h5>
+                    <p>Comienza agregando un nuevo establecimiento.</p>
                     <a asp-action="Create" class="btn btn-primary">
                         <i class="fas fa-plus me-1"></i> Crear Primer Establecimiento
                     </a>

@@ -38,6 +38,15 @@
                 <form asp-action="Delete" method="post">
                     <input type="hidden" asp-for="ID_Region" />
 
+                    @if (!ViewData.ModelState.IsValid)
+                    {
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-circle me-1"></i>
+                            <asp-validation-summary />
+                            @Html.ValidationSummary(true, "", new { @class = "mb-0" })
+                        </div>
+                    }
+
                     <div class="d-flex justify-content-between">
                         <a asp-action="Index" class="btn btn-secondary">
                             <i class="fas fa-arrow-left me-1"></i> Cancelar

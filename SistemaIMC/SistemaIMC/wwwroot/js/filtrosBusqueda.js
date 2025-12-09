@@ -1,4 +1,4 @@
-﻿// Archivo: wwwroot/js/indexMedicionesFilters.js
+﻿// Archivo: wwwroot/js/filtrosBusqueda.js
 
 document.addEventListener("DOMContentLoaded", function () {
     const ddlRegion = document.getElementById("ddlRegion");
@@ -6,10 +6,20 @@ document.addEventListener("DOMContentLoaded", function () {
     const ddlEstablecimiento = document.getElementById("ddlEstablecimiento");
     const ddlCurso = document.getElementById("ddlCurso");
 
-    // URLs de las acciones API
-    const URL_API_COMUNAS = "/T_MedicionNutricional/GetComunasByRegion";
-    const URL_API_ESTABLECIMIENTOS = "/T_MedicionNutricional/GetEstablecimientosByComuna";
-    const URL_API_CURSOS = "/T_MedicionNutricional/GetCursosByEstablecimiento";
+    // Detectar el controlador actual basándose en la URL
+    const currentPath = window.location.pathname.toLowerCase();
+    let controllerName = "T_MedicionNutricional"; // Por defecto
+    
+    if (currentPath.includes("/t_estudiante")) {
+        controllerName = "T_Estudiante";
+    } else if (currentPath.includes("/t_medicionnutricional")) {
+        controllerName = "T_MedicionNutricional";
+    }
+
+    // URLs de las acciones API (dinámicas según el controlador)
+    const URL_API_COMUNAS = `/${controllerName}/GetComunasByRegion`;
+    const URL_API_ESTABLECIMIENTOS = `/${controllerName}/GetEstablecimientosByComuna`;
+    const URL_API_CURSOS = `/${controllerName}/GetCursosByEstablecimiento`;
 
     /**
      * Función para resetear y deshabilitar un dropdown

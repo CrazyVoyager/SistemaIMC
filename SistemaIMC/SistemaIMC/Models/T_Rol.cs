@@ -8,6 +8,6 @@ namespace SistemaIMC.Models
     {
         [Key]
         public int ID_Rol { get; set; }
-        public string NombreRol { get; set; }
+        public string NombreRol { get; set; } = string.Empty;
     }
 }

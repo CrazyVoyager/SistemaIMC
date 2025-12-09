@@ -8,7 +8,7 @@ namespace SistemaIMC.Models
     {
         [Key]
         public int ID_CategoriaIMC { get; set; }
-        public string NombreCategoria { get; set; }
+        public string NombreCategoria { get; set; } = string.Empty;
 
         [NotMapped]
         public decimal? RangoMinIMC { get; set; }

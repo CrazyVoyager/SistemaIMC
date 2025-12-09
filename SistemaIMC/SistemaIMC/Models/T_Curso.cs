@@ -8,7 +8,7 @@ namespace SistemaIMC.Models
     {
         [Key]
         public int ID_Curso { get; set; }
-        public string NombreCurso { get; set; }
+        public string NombreCurso { get; set; } = string.Empty;
         public int ID_Establecimiento { get; set; }
 
         // Propiedad de navegación

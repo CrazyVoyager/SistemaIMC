@@ -9,6 +9,7 @@ using SistemaIMC.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace SistemaIMC.Controllers
@@ -26,12 +27,42 @@ namespace SistemaIMC.Controllers
             _context = context;
         }
 
-        private void PopulateDropdowns(T_MedicionNutricional? medicion = null)
+        /// <summary>
+        /// Obtiene el ID del establecimiento del usuario logueado desde los claims.
+        /// Retorna null si el usuario es Administrador del Sistema (no tiene establecimiento asignado).
+        /// </summary>
+        private int? GetEstablecimientoUsuarioLogueado()
+        {
+            var establecimientoClaim = User.FindFirst("ID_Establecimiento")?.Value;
+            if (!string.IsNullOrEmpty(establecimientoClaim) && int.TryParse(establecimientoClaim, out int establecimientoId))
+            {
+                return establecimientoId;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Verifica si el usuario actual es Administrador del Sistema.
+        /// </summary>
+        private bool EsAdministrador()
+        {
+            return User.IsInRole("Administrador del Sistema");
+        }
+
+        private void PopulateDropdowns(T_MedicionNutricional? medicion = null, int? establecimientoFiltro = null)
         {
             try
             {
-                var estudiantes = _context.T_Estudiante
-                    .Where(e => e.EstadoRegistro)
+                var estudiantesQuery = _context.T_Estudiante
+                    .Where(e => e.EstadoRegistro);
+
+                // Filtrar por establecimiento si se especifica
+                if (establecimientoFiltro.HasValue)
+                {
+                    estudiantesQuery = estudiantesQuery.Where(e => e.ID_Establecimiento == establecimientoFiltro.Value);
+                }
+
+                var estudiantes = estudiantesQuery
                     .Select(e => new { e.ID_Estudiante, e.NombreCompleto })
                     .OrderBy(e => e.NombreCompleto);
                 ViewData["ID_Estudiante"] = new SelectList(estudiantes, "ID_Estudiante", "NombreCompleto", medicion?.ID_Estudiante);
@@ -43,8 +74,16 @@ namespace SistemaIMC.Controllers
 
             try
             {
-                var docentes = _context.T_Usuario
-                    .Where(u => u.ID_Rol == DOCENTE_ROL_ID && u.EstadoRegistro)
+                var docentesQuery = _context.T_Usuario
+                    .Where(u => u.ID_Rol == DOCENTE_ROL_ID && u.EstadoRegistro);
+
+                // Filtrar por establecimiento si se especifica
+                if (establecimientoFiltro.HasValue)
+                {
+                    docentesQuery = docentesQuery.Where(u => u.ID_Establecimiento == establecimientoFiltro.Value);
+                }
+
+                var docentes = docentesQuery
                     .Select(d => new { d.ID_Usuario, d.Nombre })
                     .OrderBy(d => d.Nombre);
                 ViewData["ID_DocenteEncargado"] = new SelectList(docentes, "ID_Usuario", "Nombre", medicion?.ID_DocenteEncargado);
@@ -67,9 +106,12 @@ namespace SistemaIMC.Controllers
                 nuevaMedicion.ID_Estudiante = ID_Estudiante.Value;
             }
 
-            // 3. Pasa el modelo a PopulateDropdowns. 
-            // Esto asegura que el SelectList tenga el valor "Selected" correcto internamente.
-            PopulateDropdowns(nuevaMedicion);
+            // Obtener establecimiento del usuario para filtrar los dropdowns
+            var establecimientoUsuario = GetEstablecimientoUsuarioLogueado();
+            var esAdmin = EsAdministrador();
+
+            // 3. Pasa el modelo a PopulateDropdowns con filtro de establecimiento si aplica
+            PopulateDropdowns(nuevaMedicion, esAdmin ? null : establecimientoUsuario);
 
             // 4. Retorna la vista con el modelo. 
             // Esto asegura que el <select asp-for="ID_Estudiante"> tome el valor del modelo.
@@ -82,14 +124,23 @@ namespace SistemaIMC.Controllers
         [Authorize(Roles = "Administrador del Sistema, Profesor / Encargado de Mediciones")]
         public async Task<IActionResult> Create([Bind("ID_Estudiante,FechaMedicion,ID_DocenteEncargado,Peso_kg,Estatura_cm,Observaciones")] T_MedicionNutricional t_MedicionNutricional)
         {
+            var establecimientoUsuario = GetEstablecimientoUsuarioLogueado();
+            var esAdmin = EsAdministrador();
+
             if (ModelState.IsValid)
             {
                 var estudiante = await _context.T_Estudiante.FindAsync(t_MedicionNutricional.ID_Estudiante);
                 if (estudiante == null)
                 {
                     ModelState.AddModelError("ID_Estudiante", "El estudiante seleccionado no es válido.");
-                    PopulateDropdowns(t_MedicionNutricional);
+                    PopulateDropdowns(t_MedicionNutricional, esAdmin ? null : establecimientoUsuario);
                     return View(t_MedicionNutricional);
+                }
+
+                // Verificar que el profesor solo pueda crear mediciones para estudiantes de su establecimiento
+                if (!esAdmin && establecimientoUsuario.HasValue && estudiante.ID_Establecimiento != establecimientoUsuario.Value)
+                {
+                    return Forbid();
                 }
 
                 t_MedicionNutricional.ID_CategoriaIMC = null;
@@ -112,7 +163,7 @@ namespace SistemaIMC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            PopulateDropdowns(t_MedicionNutricional);
+            PopulateDropdowns(t_MedicionNutricional, esAdmin ? null : establecimientoUsuario);
             return View(t_MedicionNutricional);
         }
 
@@ -133,9 +184,21 @@ namespace SistemaIMC.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
-            var t_MedicionNutricional = await _context.T_MedicionNutricional.FindAsync(id);
+            var t_MedicionNutricional = await _context.T_MedicionNutricional
+                .Include(m => m.Estudiante)
+                .FirstOrDefaultAsync(m => m.ID_Medicion == id);
             if (t_MedicionNutricional == null) return NotFound();
-            PopulateDropdowns(t_MedicionNutricional);
+
+            // Verificar que el usuario solo pueda editar mediciones de estudiantes de su establecimiento
+            var establecimientoUsuario = GetEstablecimientoUsuarioLogueado();
+            var esAdmin = EsAdministrador();
+            
+            if (!esAdmin && establecimientoUsuario.HasValue && t_MedicionNutricional.Estudiante?.ID_Establecimiento != establecimientoUsuario.Value)
+            {
+                return Forbid();
+            }
+
+            PopulateDropdowns(t_MedicionNutricional, esAdmin ? null : establecimientoUsuario);
             return View(t_MedicionNutricional);
         }
 
@@ -147,14 +210,23 @@ namespace SistemaIMC.Controllers
         {
             if (id != t_MedicionNutricional.ID_Medicion) return NotFound();
 
+            var establecimientoUsuario = GetEstablecimientoUsuarioLogueado();
+            var esAdmin = EsAdministrador();
+
             if (ModelState.IsValid)
             {
                 var estudiante = await _context.T_Estudiante.FindAsync(t_MedicionNutricional.ID_Estudiante);
                 if (estudiante == null)
                 {
                     ModelState.AddModelError("ID_Estudiante", "El estudiante seleccionado no es válido.");
-                    PopulateDropdowns(t_MedicionNutricional);
+                    PopulateDropdowns(t_MedicionNutricional, esAdmin ? null : establecimientoUsuario);
                     return View(t_MedicionNutricional);
+                }
+
+                // Verificar que el profesor solo pueda editar mediciones de estudiantes de su establecimiento
+                if (!esAdmin && establecimientoUsuario.HasValue && estudiante.ID_Establecimiento != establecimientoUsuario.Value)
+                {
+                    return Forbid();
                 }
 
                 t_MedicionNutricional.ID_CategoriaIMC = null;
@@ -183,13 +255,30 @@ namespace SistemaIMC.Controllers
                 return RedirectToAction(nameof(Index));
             }
 
-            PopulateDropdowns(t_MedicionNutricional);
+            PopulateDropdowns(t_MedicionNutricional, esAdmin ? null : establecimientoUsuario);
             return View(t_MedicionNutricional);
         }
 
         // GET: T_MedicionNutricional (Index) - Accesible para Admin, Director y Profesor
         public async Task<IActionResult> Index(int? RegionId, int? ComunaId, int? EstablecimientoId, int? CursoId, string searchRut)
         {
+            // --- 0. Obtener el establecimiento del usuario logueado ---
+            var establecimientoUsuario = GetEstablecimientoUsuarioLogueado();
+            var esAdmin = EsAdministrador();
+
+            // Si el usuario no es admin y tiene establecimiento asignado, forzar el filtro
+            if (!esAdmin && establecimientoUsuario.HasValue)
+            {
+                EstablecimientoId = establecimientoUsuario.Value;
+                ViewBag.MostrarFiltrosGeograficos = false;
+                ViewBag.NombreEstablecimiento = (await _context.T_Establecimientos
+                    .FirstOrDefaultAsync(e => e.ID_Establecimiento == establecimientoUsuario.Value))?.NombreEstablecimiento ?? "Mi Establecimiento";
+            }
+            else
+            {
+                ViewBag.MostrarFiltrosGeograficos = true;
+            }
+
             // --- 1. Carga inicial de Dropdowns (solo la primera lista y precarga de seleccionados) ---
             var regiones = await _context.T_Region
                 .OrderBy(r => r.NombreRegion)
@@ -199,7 +288,20 @@ namespace SistemaIMC.Controllers
             // Inicializar los demás ViewBags para que la vista recupere la selección si aplica
             ViewBag.Comunas = new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text", ComunaId);
             ViewBag.Establecimientos = new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text", EstablecimientoId);
-            ViewBag.Cursos = new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text", CursoId);
+            
+            // Cargar cursos del establecimiento del usuario si aplica
+            if (!esAdmin && establecimientoUsuario.HasValue)
+            {
+                var cursosEstablecimiento = await _context.T_Curso
+                    .Where(c => c.ID_Establecimiento == establecimientoUsuario.Value)
+                    .OrderBy(c => c.NombreCurso)
+                    .ToListAsync();
+                ViewBag.Cursos = new SelectList(cursosEstablecimiento, "ID_Curso", "NombreCurso", CursoId);
+            }
+            else
+            {
+                ViewBag.Cursos = new SelectList(Enumerable.Empty<SelectListItem>(), "Value", "Text", CursoId);
+            }
 
             // --- 2. Construcción de la Consulta y Aplicación de Filtros ---
 
@@ -209,10 +311,10 @@ namespace SistemaIMC.Controllers
             var medicionesQuery = _context.T_MedicionNutricional
                 // Incluir toda la cadena de navegación: Medicion -> Estudiante -> Curso -> Establecimiento -> Comuna -> Región
                 .Include(m => m.Estudiante)
-                    .ThenInclude(e => e.Curso)
-                        .ThenInclude(c => c.Establecimiento)
-                            .ThenInclude(e => e.Comuna)
-                                .ThenInclude(c => c.Region)
+                    .ThenInclude(e => e!.Curso)
+                        .ThenInclude(c => c!.Establecimiento)
+                            .ThenInclude(e => e!.Comuna)
+                                .ThenInclude(c => c!.Region)
                 .Include(m => m.CategoriaIMC)
                 .Include(m => m.DocenteEncargado)
                 .Include(m => m.ClasificacionFinal)
@@ -221,25 +323,25 @@ namespace SistemaIMC.Controllers
             // Aplicar filtros de forma jerárquica (el filtro más específico anula los más generales)
             if (CursoId.HasValue && CursoId.Value > 0)
             {
-                medicionesQuery = medicionesQuery.Where(m => m.Estudiante.ID_Curso == CursoId.Value);
+                medicionesQuery = medicionesQuery.Where(m => m.Estudiante != null && m.Estudiante.ID_Curso == CursoId.Value);
             }
             else if (EstablecimientoId.HasValue && EstablecimientoId.Value > 0)
             {
-                medicionesQuery = medicionesQuery.Where(m => m.Estudiante.Curso.ID_Establecimiento == EstablecimientoId.Value);
+                medicionesQuery = medicionesQuery.Where(m => m.Estudiante != null && m.Estudiante.Curso != null && m.Estudiante.Curso.ID_Establecimiento == EstablecimientoId.Value);
             }
             else if (ComunaId.HasValue && ComunaId.Value > 0)
             {
-                medicionesQuery = medicionesQuery.Where(m => m.Estudiante.Curso.Establecimiento.ID_Comuna == ComunaId.Value);
+                medicionesQuery = medicionesQuery.Where(m => m.Estudiante != null && m.Estudiante.Curso != null && m.Estudiante.Curso.Establecimiento != null && m.Estudiante.Curso.Establecimiento.ID_Comuna == ComunaId.Value);
             }
             else if (RegionId.HasValue && RegionId.Value > 0)
             {
-                medicionesQuery = medicionesQuery.Where(m => m.Estudiante.Curso.Establecimiento.Comuna.ID_Region == RegionId.Value);
+                medicionesQuery = medicionesQuery.Where(m => m.Estudiante != null && m.Estudiante.Curso != null && m.Estudiante.Curso.Establecimiento != null && m.Estudiante.Curso.Establecimiento.Comuna != null && m.Estudiante.Curso.Establecimiento.Comuna.ID_Region == RegionId.Value);
             }
             if (!string.IsNullOrEmpty(searchRut))
             {
                 // Usamos Contains para que encuentre coincidencias parciales (ej: "123" encuentra "123456")
                 // Opcional: .Trim() elimina espacios accidentales
-                medicionesQuery = medicionesQuery.Where(m => m.Estudiante.RUT.Contains(searchRut.Trim()));
+                medicionesQuery = medicionesQuery.Where(m => m.Estudiante != null && m.Estudiante.RUT.Contains(searchRut.Trim()));
             }
             // Obtener la lista final
             var mediciones = await medicionesQuery.ToListAsync();
@@ -329,12 +431,21 @@ namespace SistemaIMC.Controllers
         {
             try
             {
+                // Aplicar filtro por establecimiento del usuario si no es admin
+                var establecimientoUsuario = GetEstablecimientoUsuarioLogueado();
+                var esAdmin = EsAdministrador();
+
+                if (!esAdmin && establecimientoUsuario.HasValue)
+                {
+                    EstablecimientoId = establecimientoUsuario.Value;
+                }
+
                 var medicionesQuery = _context.T_MedicionNutricional
                     .Include(m => m.Estudiante)
-                        .ThenInclude(e => e.Curso)
-                            .ThenInclude(c => c.Establecimiento)
-                                .ThenInclude(e => e.Comuna)
-                                    .ThenInclude(c => c.Region)
+                        .ThenInclude(e => e!.Curso)
+                            .ThenInclude(c => c!.Establecimiento)
+                                .ThenInclude(e => e!.Comuna)
+                                    .ThenInclude(c => c!.Region)
                     .Include(m => m.CategoriaIMC)
                     .Include(m => m.DocenteEncargado)
                     .Include(m => m.ClasificacionFinal)
@@ -343,24 +454,24 @@ namespace SistemaIMC.Controllers
                 // Aplicar filtros (misma lógica que Index)
                 if (CursoId.HasValue && CursoId.Value > 0)
                 {
-                    medicionesQuery = medicionesQuery.Where(m => m.Estudiante.ID_Curso == CursoId.Value);
+                    medicionesQuery = medicionesQuery.Where(m => m.Estudiante != null && m.Estudiante.ID_Curso == CursoId.Value);
                 }
                 else if (EstablecimientoId.HasValue && EstablecimientoId.Value > 0)
                 {
-                    medicionesQuery = medicionesQuery.Where(m => m.Estudiante.Curso.ID_Establecimiento == EstablecimientoId.Value);
+                    medicionesQuery = medicionesQuery.Where(m => m.Estudiante != null && m.Estudiante.Curso != null && m.Estudiante.Curso.ID_Establecimiento == EstablecimientoId.Value);
                 }
                 else if (ComunaId.HasValue && ComunaId.Value > 0)
                 {
-                    medicionesQuery = medicionesQuery.Where(m => m.Estudiante.Curso.Establecimiento.ID_Comuna == ComunaId.Value);
+                    medicionesQuery = medicionesQuery.Where(m => m.Estudiante != null && m.Estudiante.Curso != null && m.Estudiante.Curso.Establecimiento != null && m.Estudiante.Curso.Establecimiento.ID_Comuna == ComunaId.Value);
                 }
                 else if (RegionId.HasValue && RegionId.Value > 0)
                 {
-                    medicionesQuery = medicionesQuery.Where(m => m.Estudiante.Curso.Establecimiento.Comuna.ID_Region == RegionId.Value);
+                    medicionesQuery = medicionesQuery.Where(m => m.Estudiante != null && m.Estudiante.Curso != null && m.Estudiante.Curso.Establecimiento != null && m.Estudiante.Curso.Establecimiento.Comuna != null && m.Estudiante.Curso.Establecimiento.Comuna.ID_Region == RegionId.Value);
                 }
 
                 if (!string.IsNullOrEmpty(searchRut))
                 {
-                    medicionesQuery = medicionesQuery.Where(m => m.Estudiante.RUT.Contains(searchRut.Trim()));
+                    medicionesQuery = medicionesQuery.Where(m => m.Estudiante != null && m.Estudiante.RUT.Contains(searchRut.Trim()));
                 }
 
                 var mediciones = await medicionesQuery.ToListAsync();

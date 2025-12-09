@@ -9,8 +9,8 @@ namespace SistemaIMC.Models
     {
         [Key]
         public  int ID_Estudiante { get; set; }
-        public string RUT { get; set; }
-        public string NombreCompleto { get; set; }
+        public string RUT { get; set; } = string.Empty;
+        public string NombreCompleto { get; set; } = string.Empty;
         public DateTime FechaNacimiento { get; set; }
         public int ID_Sexo { get; set; }
         public int ID_Establecimiento { get; set; }

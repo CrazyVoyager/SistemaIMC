@@ -9,6 +9,6 @@ namespace SistemaIMC.Models
     {
         [Key]
         public int ID_Sexo { get; set; }
-        public string Sexo { get; set; }
+        public string Sexo { get; set; } = string.Empty;
     }
 }

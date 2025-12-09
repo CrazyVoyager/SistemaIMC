@@ -23,7 +23,7 @@ namespace SistemaIMC.Models
         public decimal Puntuacion_Z { get; set; }
 
         [Required]
-        public string Categoria { get; set; }
+        public string Categoria { get; set; } = string.Empty;
 
         public string? Referencia_Normativa { get; set; }
 

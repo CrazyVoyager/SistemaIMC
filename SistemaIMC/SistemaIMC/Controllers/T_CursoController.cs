@@ -124,7 +124,7 @@ namespace SistemaIMC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task LoadEstablecimientosViewBag(object selectedEstablecimiento = null)
+        private async Task LoadEstablecimientosViewBag(object? selectedEstablecimiento = null)
         {
             ViewBag.ID_Establecimiento = new SelectList(await _context.T_Establecimientos.OrderBy(e => e.NombreEstablecimiento).ToListAsync(), "ID_Establecimiento", "NombreEstablecimiento", selectedEstablecimiento);
         }

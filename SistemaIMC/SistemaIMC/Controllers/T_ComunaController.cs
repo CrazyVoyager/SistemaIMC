@@ -164,7 +164,7 @@ namespace SistemaIMC.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private async Task LoadRegionesViewBag(object selectedRegion = null)
+        private async Task LoadRegionesViewBag(object? selectedRegion = null)
         {
             ViewBag.ID_Region = new SelectList(
                 await _context.T_Region.OrderBy(r => r.NombreRegion).ToListAsync(),

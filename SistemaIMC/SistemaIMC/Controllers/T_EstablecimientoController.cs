@@ -72,7 +72,7 @@ namespace SistemaIMC.Controllers
                     await _context.SaveChangesAsync();
                     return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateException dbEx)
+                catch (DbUpdateException)
                 {
                     // 2. Captura errores específicos de Base de Datos (ej: claves duplicadas)
                     // Opcional: Loguear dbEx
@@ -182,7 +182,7 @@ namespace SistemaIMC.Controllers
         }
 
         // ⭐ MÉTODO AUXILIAR PARA CARGAR LAS COMUNAS ⭐
-        private async Task LoadComunasViewBag(object selectedComuna = null)
+        private async Task LoadComunasViewBag(object? selectedComuna = null)
         {
             // Asumo que tu contexto tiene una tabla T_Comunas
             ViewBag.ID_Comuna = new SelectList(
