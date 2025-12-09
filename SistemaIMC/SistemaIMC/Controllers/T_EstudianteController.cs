@@ -453,6 +453,40 @@ namespace SistemaIMC.Controllers
             }
         }
 
+        [HttpGet]
+        [Authorize(Roles = "Administrador del Sistema, Supervisor / Director de la Entidad, Profesor / Encargado de Mediciones")]
+        public async Task<IActionResult> DescargarFicha(int id)
+        {
+            // 1. Buscar al estudiante con todos sus datos relacionados
+            var estudiante = await _context.T_Estudiante
+                .Include(e => e.Sexo)
+                .Include(e => e.Curso)
+                .Include(e => e.Establecimiento)
+                    .ThenInclude(est => est.Comuna) // Importante para mostrar la comuna en la ficha
+                .FirstOrDefaultAsync(m => m.ID_Estudiante == id);
+
+            if (estudiante == null)
+            {
+                return NotFound();
+            }
+
+            // 2. Seguridad: Verificar que el usuario tenga permiso para ver a ESTE alumno
+            // (Reutilizando tu lógica de seguridad existente)
+            var establecimientoUsuario = GetEstablecimientoUsuarioLogueado();
+            var esAdmin = EsAdministrador();
+
+            if (!esAdmin && establecimientoUsuario.HasValue && estudiante.ID_Establecimiento != establecimientoUsuario.Value)
+            {
+                return Forbid(); // El profesor intentó descargar ficha de otro colegio
+            }
+
+            // 3. Generar el PDF usando la plantilla individual
+            var pdfBytes = SistemaIMC.Services.PdfExportService.ExportarFichaEstudiante(estudiante);
+
+            // 4. Descargar con nombre personalizado (Ej: "Ficha_Luis_Hernandez.pdf")
+            string nombreArchivo = $"Ficha_{estudiante.NombreCompleto.Replace(" ", "_")}.pdf";
+            return File(pdfBytes, "application/pdf", nombreArchivo);
+        }
 
         [HttpGet]
         public async Task<IActionResult> GetComunasByRegion(int regionId)

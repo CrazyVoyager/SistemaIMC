@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
 using SistemaIMC.Data;
+using QuestPDF.Infrastructure;
 
 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -25,6 +26,7 @@ builder.Services.AddDbContext<TdDbContext>(options =>
     options.UseSqlServer(connectionString)
 );
 
+QuestPDF.Settings.License = LicenseType.Community;
 
 var app = builder.Build();
 

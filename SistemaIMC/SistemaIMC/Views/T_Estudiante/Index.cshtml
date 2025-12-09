@@ -197,10 +197,14 @@
                                     </td>
                                     <td>
                                         <div class="btn-group btn-group-sm" role="group">
-                                            <a asp-action="Details" asp-route-id="@estudiante.ID_Estudiante"
-                                               class="btn btn-info" title="Ver Detalles">
+                                            <a asp-action="Details" asp-route-id="@estudiante.ID_Estudiante" class="btn btn-info" title="Ver Detalles">
                                                 <i class="fas fa-eye"></i>
                                             </a>
+
+                                            <a asp-action="DescargarFicha" asp-route-id="@estudiante.ID_Estudiante" class="btn btn-dark" title="Descargar Ficha PDF" target="_blank">
+                                                <i class="fas fa-file-pdf"></i>
+                                            </a>
+
                                             <a href="#"
                                                data-estudiante-id="@estudiante.ID_Estudiante"
                                                class="btn btn-success btn-historial-modal"
