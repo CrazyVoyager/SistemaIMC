@@ -23,8 +23,19 @@
                     <i class="fas fa-plus me-1"></i> Nueva Medición
                 </a>
             }
-            <button type="button" class="btn btn-success" onclick="exportarConFiltros('ExportarMediciones', 'T_MedicionNutricional')">
-                <i class="fas fa-file-excel me-1"></i> Exportar Excel
+
+            @* Botón: Exportar TODO (sin filtros) *@
+            <button type="button" class="btn btn-success"
+                    onclick="exportarAExcel('ExportarMediciones', 'T_MedicionNutricional', {}, event)"
+                    title="Exportar todas las mediciones">
+                <i class="fas fa-file-excel me-1"></i> Exportar (Todo)
+            </button>
+
+            @* Botón: Exportar con Filtros (usa los parámetros actuales en la URL) *@
+            <button type="button" class="btn btn-outline-success"
+                    onclick="exportarConFiltros('ExportarMediciones', 'T_MedicionNutricional', event)"
+                    title="Exportar según filtros aplicados">
+                <i class="fas fa-filter me-1"></i> Exportar (Con filtros)
             </button>
         </div>
     </div>
@@ -160,7 +171,7 @@
                                         <span class="badge bg-secondary">@medicion.Estatura_cm cm</span>
                                     </td>
                                     <td class="text-center fw-bold">
-                                        @(medicion.IMC.HasValue ? medicion.IMC.Value.ToString("F1") : "N/A")
+                                        @(medicion.IMC.HasValue? medicion.IMC.Value.ToString("F1") : "N/A")
                                     </td>
                                     <td class="text-center">
                                         @{
@@ -228,6 +239,7 @@
 
 @section Scripts {
     <script src="~/js/filtrosBusqueda.js"></script>
+    <script src="~/js/site.js"></script>
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
