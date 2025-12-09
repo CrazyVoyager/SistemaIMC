@@ -1,9 +1,80 @@
 ﻿document.addEventListener('DOMContentLoaded', function () {
-    // =======================================================
-    // 1. LÓGICA DEL MENÚ (SIN CAMBIOS)
-    // =======================================================
-    const sidebar = document.getElementById('sidebar');
-    const toggleButton = document.getElementById('sidebarToggle');
+// =======================================================
+// 1. LÓGICA DEL MODO OSCURO
+// =======================================================
+const darkModeToggle = document.getElementById('darkModeToggle');
+const darkModeIcon = document.getElementById('darkModeIcon');
+const darkModeText = document.getElementById('darkModeText');
+const htmlElement = document.documentElement;
+
+// Función para aplicar el tema
+function applyTheme(theme) {
+    htmlElement.setAttribute('data-bs-theme', theme);
+        
+    if (theme === 'dark') {
+        if (darkModeIcon) {
+            darkModeIcon.classList.remove('fa-moon');
+            darkModeIcon.classList.add('fa-sun');
+        }
+        if (darkModeText) {
+            darkModeText.textContent = 'Modo Claro';
+        }
+    } else {
+        if (darkModeIcon) {
+            darkModeIcon.classList.remove('fa-sun');
+            darkModeIcon.classList.add('fa-moon');
+        }
+        if (darkModeText) {
+            darkModeText.textContent = 'Modo Oscuro';
+        }
+    }
+}
+
+// Cargar tema guardado o detectar preferencia del sistema
+function loadSavedTheme() {
+    const savedTheme = localStorage.getItem('imcinador-theme');
+        
+    if (savedTheme) {
+        applyTheme(savedTheme);
+    } else {
+        // Detectar preferencia del sistema
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        applyTheme(prefersDark ? 'dark' : 'light');
+    }
+}
+
+// Toggle del modo oscuro
+if (darkModeToggle) {
+    darkModeToggle.addEventListener('click', function () {
+        const currentTheme = htmlElement.getAttribute('data-bs-theme');
+        const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            
+        applyTheme(newTheme);
+        localStorage.setItem('imcinador-theme', newTheme);
+            
+        // Animación del botón
+        this.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            this.style.transform = 'scale(1)';
+        }, 150);
+    });
+}
+
+// Cargar tema al iniciar
+loadSavedTheme();
+
+// Escuchar cambios en la preferencia del sistema
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', (e) => {
+    if (!localStorage.getItem('imcinador-theme')) {
+        applyTheme(e.matches ? 'dark' : 'light');
+    }
+});
+
+// =======================================================
+// 2. LÓGICA DEL MENÚ (SIN CAMBIOS)
+// =======================================================
+const sidebar = document.getElementById('sidebar');
+const toggleButton = document.getElementById('sidebarToggle');
 
     if (sidebar && toggleButton) {
         function toggleSidebar() {

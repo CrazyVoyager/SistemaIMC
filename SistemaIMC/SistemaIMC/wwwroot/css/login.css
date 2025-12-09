@@ -97,3 +97,216 @@ body.login-page::before {
     background: linear-gradient(135deg, #ff416c 0%, #ff4b2b 100%);
     color: white;
 }
+
+/* ========================================================== */
+/* ESTILOS RESPONSIVOS PARA LOGIN - IMCinador                */
+/* ========================================================== */
+
+/* === Tablets (768px - 991px) === */
+@media (max-width: 991px) {
+    .form-signin {
+        max-width: 380px;
+        padding: 2rem;
+    }
+}
+
+/* === Móviles (hasta 768px) === */
+@media (max-width: 768px) {
+    body.login-page {
+        padding: 20px 15px;
+        align-items: flex-start;
+        padding-top: 10vh;
+    }
+    
+    .form-signin {
+        max-width: 100%;
+        padding: 1.75rem;
+        border-radius: 0.75rem;
+    }
+    
+    .login-icon-wrapper {
+        width: 70px;
+        height: 70px;
+    }
+    
+    .login-icon-wrapper i {
+        font-size: 2rem;
+    }
+    
+    .form-signin .h3 {
+        font-size: 1.5rem;
+    }
+    
+    .form-signin .text-muted {
+        font-size: 0.9rem;
+    }
+    
+    .form-floating > .form-control {
+        font-size: 16px; /* Previene zoom en iOS */
+        padding: 1rem 0.75rem;
+    }
+    
+    .form-floating > label {
+        font-size: 0.9rem;
+    }
+    
+    .login-page .btn-lg {
+        padding: 0.75rem 1.25rem;
+        font-size: 1rem;
+    }
+}
+
+/* === Móviles pequeños (hasta 480px) === */
+@media (max-width: 480px) {
+    body.login-page {
+        padding: 15px 10px;
+        padding-top: 5vh;
+    }
+    
+    .form-signin {
+        padding: 1.5rem 1.25rem;
+    }
+    
+    .login-icon-wrapper {
+        width: 60px;
+        height: 60px;
+    }
+    
+    .login-icon-wrapper i {
+        font-size: 1.75rem;
+    }
+    
+    .form-signin .h3 {
+        font-size: 1.3rem;
+    }
+    
+    .form-signin .text-muted {
+        font-size: 0.85rem;
+    }
+    
+    .mb-3 {
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .mb-4 {
+        margin-bottom: 1rem !important;
+    }
+    
+    .form-floating {
+        margin-bottom: 0.75rem;
+    }
+    
+    .login-page .btn-lg {
+        padding: 0.65rem 1rem;
+        font-size: 0.95rem;
+    }
+    
+    .form-signin small {
+        font-size: 0.75rem;
+    }
+    
+    .mt-4 {
+        margin-top: 1rem !important;
+    }
+}
+
+/* === Orientación horizontal en móviles === */
+@media (max-width: 768px) and (orientation: landscape) {
+    body.login-page {
+        padding-top: 20px;
+        padding-bottom: 20px;
+        min-height: auto;
+    }
+    
+    .form-signin {
+        padding: 1.25rem;
+    }
+    
+    .login-icon-wrapper {
+        width: 50px;
+        height: 50px;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    .login-icon-wrapper i {
+        font-size: 1.5rem;
+    }
+    
+    .form-signin .h3 {
+        font-size: 1.2rem;
+        margin-bottom: 0.25rem !important;
+    }
+    
+    .form-signin > .text-center.mb-4 {
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .form-floating {
+        margin-bottom: 0.5rem;
+    }
+    
+    .form-floating > .form-control {
+        padding: 0.75rem;
+        height: auto;
+    }
+    
+    .form-floating > label {
+        padding: 0.75rem;
+    }
+}
+
+/* ========================================================== */
+/* MODO OSCURO PARA LOGIN - IMCinador                        */
+/* ========================================================== */
+
+[data-bs-theme="dark"] body.login-page {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+}
+
+[data-bs-theme="dark"] body.login-page::before {
+    background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 50%);
+}
+
+[data-bs-theme="dark"] .form-signin {
+    background: rgba(31, 41, 64, 0.95);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+    border: 1px solid #3d4f6f;
+}
+
+[data-bs-theme="dark"] .form-signin .h3,
+[data-bs-theme="dark"] .form-signin h1 {
+    color: #e4e6eb;
+}
+
+[data-bs-theme="dark"] .form-signin .text-muted {
+    color: #b0b3b8 !important;
+}
+
+[data-bs-theme="dark"] .login-page .text-gradient {
+    color: #7c9bea;
+}
+
+[data-bs-theme="dark"] .login-page .form-floating > .form-control {
+    background-color: #2a3550;
+    border-color: #3d4f6f;
+    color: #e4e6eb;
+}
+
+[data-bs-theme="dark"] .login-page .form-floating > .form-control:focus {
+    background-color: #2a3550;
+    border-color: #667eea;
+    color: #e4e6eb;
+}
+
+[data-bs-theme="dark"] .login-page .form-floating > .form-control::placeholder {
+    color: #8a8d91;
+}
+
+[data-bs-theme="dark"] .login-page .form-floating > label {
+    color: #8a8d91;
+}
+
+[data-bs-theme="dark"] .form-signin small,
+[data-bs-theme="dark"] .form-signin p.text-muted {
+    color: #8a8d91 !important;
+}

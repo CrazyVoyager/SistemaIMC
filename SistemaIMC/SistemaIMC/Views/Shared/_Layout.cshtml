@@ -16,7 +16,7 @@ ViewData["Title"] = ViewData["Title"] ?? "IMCinador";
 }
 
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-bs-theme="light">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -104,17 +104,39 @@ ViewData["Title"] = ViewData["Title"] ?? "IMCinador";
             }
 
         /* Estilos de submenús */
-        .sidebar .collapse .nav-link {
-            padding: 0.5rem 1rem 0.5rem 2.5rem;
-            font-size: 0.9em;
-            color: rgba(255, 255, 255, 0.7);
-        }
-
-            .sidebar .collapse .nav-link:hover {
-                color: #fff;
-                background-color: rgba(255, 255, 255, 0.15);
+            .sidebar .collapse .nav-link {
+                padding: 0.5rem 1rem 0.5rem 2.5rem;
+                font-size: 0.9em;
+                color: rgba(255, 255, 255, 0.7);
             }
-    </style>
+
+                .sidebar .collapse .nav-link:hover {
+                    color: #fff;
+                    background-color: rgba(255, 255, 255, 0.15);
+                }
+
+            /* Estilos del botón de modo oscuro */
+            #darkModeToggle {
+                transition: all 0.3s ease;
+            }
+
+            #darkModeToggle:hover {
+                transform: scale(1.05);
+            }
+
+            /* Modo oscuro - Sidebar */
+            [data-bs-theme="dark"] .sidebar.offcanvas {
+                background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+            }
+
+            [data-bs-theme="dark"] #sidebarToggle {
+                color: #adb5bd;
+            }
+
+            [data-bs-theme="dark"] #sidebarToggle:hover {
+                color: #fff;
+            }
+        </style>
 </head>
 <body>
     <div class="container-fluid">
@@ -219,17 +241,22 @@ ViewData["Title"] = ViewData["Title"] ?? "IMCinador";
                     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
 
                         <div class="d-flex align-items-center">
-                            <button id="sidebarToggle" class="btn btn-link me-2 p-0" type="button"
-                                    data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas"
-                                    aria-controls="sidebarOffcanvas">
-                                <i class="fas fa-bars fs-4"></i>
-                            </button>
+                                <button id="sidebarToggle" class="btn btn-link me-2 p-0" type="button"
+                                        data-bs-toggle="offcanvas" data-bs-target="#sidebarOffcanvas"
+                                        aria-controls="sidebarOffcanvas">
+                                    <i class="fas fa-bars fs-4"></i>
+                                </button>
 
-                            <h1 class="h2">@ViewData["Title"]</h1>
+                                <h1 class="h2">@ViewData["Title"]</h1>
+                            </div>
+
+                            <div class="d-flex align-items-center">
+                                <button id="darkModeToggle" class="btn btn-outline-secondary btn-sm" type="button" title="Cambiar tema">
+                                    <i class="fas fa-moon" id="darkModeIcon"></i>
+                                    <span class="d-none d-md-inline ms-1" id="darkModeText">Modo Oscuro</span>
+                                </button>
+                            </div>
                         </div>
-
-                     
-                    </div>
                 }
 
                 @RenderBody()

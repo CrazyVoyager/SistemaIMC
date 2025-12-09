@@ -445,10 +445,80 @@ body {
     color: #667eea;
 }
 
-/* === Responsive === */
+/* ========================================================== */
+/* ESTILOS RESPONSIVOS PARA MÓVILES - IMCinador              */
+/* ========================================================== */
+
+/* === Tablets y pantallas medianas (768px - 991px) === */
+@media (max-width: 991px) {
+    .container-fluid {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+    
+    .dashboard-card .icon-wrapper {
+        width: 50px;
+        height: 50px;
+    }
+    
+    .welcome-card .card-body {
+        padding: 2rem !important;
+    }
+}
+
+/* === Móviles y pantallas pequeñas (hasta 768px) === */
 @media (max-width: 768px) {
+    /* Contenedor principal */
+    .container-fluid {
+        padding-left: 8px;
+        padding-right: 8px;
+    }
+    
+    /* Títulos de página */
+    .h2, h2 {
+        font-size: 1.25rem !important;
+    }
+    
+    .h3, h3 {
+        font-size: 1.1rem !important;
+    }
+    
+    /* Header de página */
+    .d-flex.justify-content-between {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+    
+    .d-flex.justify-content-between .btn {
+        width: 100%;
+    }
+    
+    /* Cards */
+    .card {
+        margin-bottom: 1rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+    
+    .card-header {
+        padding: 0.75rem 1rem;
+    }
+    
+    .card-header h6 {
+        font-size: 0.9rem;
+    }
+    
+    /* Botones */
+    .btn {
+        padding: 0.5rem 1rem;
+        font-size: 0.875rem;
+    }
+    
     .btn-group {
         flex-direction: column;
+        width: 100%;
     }
     
     .btn-group .btn {
@@ -456,13 +526,341 @@ body {
         border-radius: var(--border-radius) !important;
     }
     
+    .btn-group-sm .btn {
+        padding: 0.4rem 0.6rem;
+    }
+    
+    /* Tablas responsivas */
+    .table-responsive {
+        border: 0;
+        margin: 0 -1rem;
+        padding: 0 1rem;
+    }
+    
+    .table {
+        font-size: 0.8rem;
+    }
+    
     .table td, .table th {
-        padding: 0.5rem;
+        padding: 0.5rem 0.4rem;
+        font-size: 0.8rem;
+    }
+    
+    .table thead th {
+        font-size: 0.7rem;
+        padding: 0.6rem 0.4rem;
+    }
+    
+    /* Ocultar columnas menos importantes en móvil */
+    .table .d-none-mobile {
+        display: none !important;
+    }
+    
+    /* Badges más pequeños */
+    .badge {
+        padding: 0.35em 0.6em;
+        font-size: 0.7rem;
+    }
+    
+    /* Dashboard cards */
+    .dashboard-card {
+        margin-bottom: 1rem;
+    }
+    
+    .dashboard-card .card-body {
+        padding: 1rem !important;
+    }
+    
+    .dashboard-card .icon-wrapper {
+        width: 45px;
+        height: 45px;
+        margin-bottom: 0.75rem;
+    }
+    
+    .dashboard-card .card-title {
+        font-size: 1rem;
+    }
+    
+    .dashboard-card .card-text {
         font-size: 0.85rem;
     }
     
+    .dashboard-card .d-flex.gap-2 {
+        flex-direction: column;
+    }
+    
+    .dashboard-card .d-flex.gap-2 .btn {
+        width: 100%;
+        margin-bottom: 0.5rem;
+    }
+    
+    /* Welcome card */
+    .welcome-card .card-body {
+        padding: 1.5rem !important;
+    }
+    
+    .welcome-card .display-5 {
+        font-size: 1.5rem !important;
+    }
+    
+    .welcome-card .fs-5 {
+        font-size: 0.9rem !important;
+    }
+    
+    /* Formularios */
+    .form-control, .form-select {
+        font-size: 16px; /* Previene zoom en iOS */
+        padding: 0.6rem 0.8rem;
+    }
+    
+    .form-label {
+        font-size: 0.875rem;
+    }
+    
+    .mb-3 {
+        margin-bottom: 0.75rem !important;
+    }
+    
+    /* Acciones de formulario */
+    .d-flex.justify-content-between.mt-4 {
+        flex-direction: column-reverse;
+        gap: 0.5rem;
+    }
+    
+    .d-flex.justify-content-between.mt-4 .btn {
+        width: 100%;
+    }
+    
+    /* Estados vacíos */
+    .empty-state {
+        padding: 2rem 1rem;
+    }
+    
+    .empty-state i {
+        font-size: 3rem;
+    }
+    
+    .empty-state h5 {
+        font-size: 1rem;
+    }
+    
+    .empty-state p {
+        font-size: 0.875rem;
+    }
+    
+    /* Accesos rápidos */
+    .col-6.col-md-3 .p-3 {
+        padding: 0.75rem !important;
+    }
+    
+    .col-6.col-md-3 .fa-2x {
+        font-size: 1.5rem !important;
+    }
+    
+    .col-6.col-md-3 .fw-semibold {
+        font-size: 0.75rem;
+    }
+    
+    /* Filtros */
+    .filter-card .row {
+        gap: 0.5rem;
+    }
+    
+    .filter-card .col-md-3,
+    .filter-card .col-md-4,
+    .filter-card .col-md-2 {
+        padding-left: 0.5rem;
+        padding-right: 0.5rem;
+    }
+}
+
+/* === Móviles pequeños (hasta 480px) === */
+@media (max-width: 480px) {
+    html {
+        font-size: 13px;
+    }
+    
+    .container-fluid {
+        padding-left: 5px;
+        padding-right: 5px;
+    }
+    
+    /* Header más compacto */
+    .pt-3.pb-2.mb-3 {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+        margin-bottom: 0.75rem !important;
+    }
+    
+    .h2, h2 {
+        font-size: 1.1rem !important;
+    }
+    
+    /* Cards ultra compactas */
     .card-body {
-        padding: 1rem;
+        padding: 0.75rem;
+    }
+    
+    .card-header {
+        padding: 0.6rem 0.75rem;
+    }
+    
+    /* Tablas muy pequeñas */
+    .table {
+        font-size: 0.75rem;
+    }
+    
+    .table td, .table th {
+        padding: 0.4rem 0.3rem;
+    }
+    
+    .table thead th {
+        font-size: 0.65rem;
+    }
+    
+    /* Botones de acción en tabla */
+    .btn-group-sm .btn {
+        padding: 0.3rem 0.5rem;
+        font-size: 0.75rem;
+    }
+    
+    .btn-group-sm .btn i {
+        font-size: 0.7rem;
+    }
+    
+    /* Welcome card compacta */
+    .welcome-card .card-body {
+        padding: 1rem !important;
+    }
+    
+    .welcome-card .display-5 {
+        font-size: 1.2rem !important;
+    }
+    
+    .welcome-card .fs-5 {
+        font-size: 0.8rem !important;
+    }
+    
+    .welcome-card hr {
+        margin: 0.75rem 0 !important;
+    }
+    
+    /* Dashboard cards compactas */
+    .dashboard-card .icon-wrapper {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .dashboard-card .card-title {
+        font-size: 0.9rem;
+    }
+    
+    .dashboard-card .card-text {
+        font-size: 0.8rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+    
+    /* Accesos rápidos más pequeños */
+    .col-6.col-md-3 .p-3 {
+        padding: 0.5rem !important;
+    }
+    
+    .col-6.col-md-3 .fa-2x {
+        font-size: 1.25rem !important;
+    }
+    
+    .col-6.col-md-3 .fw-semibold {
+        font-size: 0.7rem;
+    }
+    
+    /* Badges muy pequeños */
+    .badge {
+        padding: 0.25em 0.5em;
+        font-size: 0.65rem;
+    }
+    
+    /* Estados vacíos compactos */
+    .empty-state {
+        padding: 1.5rem 0.75rem;
+    }
+    
+    .empty-state i {
+        font-size: 2.5rem;
+        margin-bottom: 1rem;
+    }
+}
+
+/* === Mejoras para orientación horizontal en móviles === */
+@media (max-width: 768px) and (orientation: landscape) {
+    .welcome-card .card-body {
+        padding: 1rem 1.5rem !important;
+    }
+    
+    .welcome-card .display-5 {
+        font-size: 1.3rem !important;
+    }
+    
+    .dashboard-card {
+        margin-bottom: 0.75rem;
+    }
+}
+
+/* === Utilidades responsivas adicionales === */
+/* Ocultar en móvil */
+@media (max-width: 768px) {
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+/* Mostrar solo en móvil */
+@media (min-width: 769px) {
+    .show-mobile-only {
+        display: none !important;
+    }
+}
+
+/* Texto truncado en móvil */
+@media (max-width: 768px) {
+    .text-truncate-mobile {
+        max-width: 120px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: inline-block;
+    }
+}
+
+/* Stack buttons en móvil */
+@media (max-width: 768px) {
+    .btn-stack-mobile {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .btn-stack-mobile .btn {
+        width: 100%;
+    }
+}
+
+/* Scroll horizontal para tablas anchas */
+.table-scroll-mobile {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* Touch-friendly: áreas de toque más grandes */
+@media (max-width: 768px) {
+    .btn, .nav-link, .form-control, .form-select {
+        min-height: 44px; /* Recomendación de Apple para áreas táctiles */
+    }
+    
+    .btn-sm {
+        min-height: 38px;
     }
 }
 
@@ -496,4 +894,328 @@ body {
 
 .welcome-card hr {
     border-color: rgba(255,255,255,0.3);
+}
+
+/* ========================================================== */
+/* MODO OSCURO - IMCinador                                    */
+/* ========================================================== */
+
+/* === Transición suave para cambio de tema === */
+html {
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+body, .card, .card-header, .card-body, .table, .form-control, .form-select {
+    transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+}
+
+/* === Variables del modo oscuro === */
+[data-bs-theme="dark"] {
+    --bs-body-bg: #1a1a2e;
+    --bs-body-color: #e4e6eb;
+    --dark-bg-primary: #1a1a2e;
+    --dark-bg-secondary: #16213e;
+    --dark-bg-card: #1f2940;
+    --dark-bg-input: #2a3550;
+    --dark-border: #3d4f6f;
+    --dark-text-primary: #e4e6eb;
+    --dark-text-secondary: #b0b3b8;
+    --dark-text-muted: #8a8d91;
+}
+
+/* === Body en modo oscuro === */
+[data-bs-theme="dark"] body {
+    background-color: #1a1a2e;
+    color: #e4e6eb;
+}
+
+/* === Cards en modo oscuro === */
+[data-bs-theme="dark"] .card {
+    background-color: #1f2940;
+    border: 1px solid #3d4f6f;
+    box-shadow: 0 0.15rem 1.75rem 0 rgba(0, 0, 0, 0.4);
+}
+
+[data-bs-theme="dark"] .card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+}
+
+[data-bs-theme="dark"] .card-header {
+    background: linear-gradient(135deg, #2a3550 0%, #1f2940 100%);
+    border-bottom: 1px solid #3d4f6f;
+    color: #e4e6eb;
+}
+
+[data-bs-theme="dark"] .card-body {
+    background-color: #1f2940;
+}
+
+/* === Dashboard cards en modo oscuro === */
+[data-bs-theme="dark"] .dashboard-card {
+    background-color: #1f2940;
+}
+
+[data-bs-theme="dark"] .dashboard-card .card-title {
+    color: #e4e6eb;
+}
+
+[data-bs-theme="dark"] .dashboard-card .card-text {
+    color: #b0b3b8;
+}
+
+/* === Tablas en modo oscuro === */
+[data-bs-theme="dark"] .table {
+    color: #e4e6eb;
+}
+
+[data-bs-theme="dark"] .table thead th {
+    background: linear-gradient(135deg, #2a3550 0%, #1f2940 100%);
+    color: #b0b3b8;
+    border-bottom: 1px solid #3d4f6f;
+}
+
+[data-bs-theme="dark"] .table tbody tr {
+    border-color: #3d4f6f;
+}
+
+[data-bs-theme="dark"] .table tbody tr:hover {
+    background-color: rgba(102, 126, 234, 0.15) !important;
+}
+
+[data-bs-theme="dark"] .table td {
+    border-color: #3d4f6f;
+    color: #e4e6eb;
+}
+
+[data-bs-theme="dark"] .table-bordered {
+    border-color: #3d4f6f;
+}
+
+[data-bs-theme="dark"] .table-bordered td,
+[data-bs-theme="dark"] .table-bordered th {
+    border-color: #3d4f6f;
+}
+
+/* === Formularios en modo oscuro === */
+[data-bs-theme="dark"] .form-control,
+[data-bs-theme="dark"] .form-select {
+    background-color: #2a3550;
+    border-color: #3d4f6f;
+    color: #e4e6eb;
+}
+
+[data-bs-theme="dark"] .form-control:focus,
+[data-bs-theme="dark"] .form-select:focus {
+    background-color: #2a3550;
+    border-color: #667eea;
+    color: #e4e6eb;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.35);
+}
+
+[data-bs-theme="dark"] .form-control::placeholder {
+    color: #8a8d91;
+}
+
+[data-bs-theme="dark"] .form-label {
+    color: #b0b3b8;
+}
+
+[data-bs-theme="dark"] .input-group-text {
+    background: linear-gradient(135deg, #2a3550 0%, #1f2940 100%);
+    border-color: #3d4f6f;
+    color: #b0b3b8;
+}
+
+[data-bs-theme="dark"] .form-control:disabled,
+[data-bs-theme="dark"] .form-control[readonly] {
+    background-color: #1a1a2e;
+    color: #8a8d91;
+}
+
+/* === Textos en modo oscuro === */
+[data-bs-theme="dark"] .text-muted {
+    color: #8a8d91 !important;
+}
+
+[data-bs-theme="dark"] .text-dark {
+    color: #e4e6eb !important;
+}
+
+[data-bs-theme="dark"] h1, 
+[data-bs-theme="dark"] h2, 
+[data-bs-theme="dark"] h3, 
+[data-bs-theme="dark"] h4, 
+[data-bs-theme="dark"] h5, 
+[data-bs-theme="dark"] h6 {
+    color: #e4e6eb;
+}
+
+[data-bs-theme="dark"] .fw-bold,
+[data-bs-theme="dark"] .fw-semibold {
+    color: #e4e6eb;
+}
+
+/* === Bordes en modo oscuro === */
+[data-bs-theme="dark"] .border-bottom {
+    border-color: #3d4f6f !important;
+}
+
+[data-bs-theme="dark"] .border {
+    border-color: #3d4f6f !important;
+}
+
+/* === Estados vacíos en modo oscuro === */
+[data-bs-theme="dark"] .empty-state i {
+    color: #4a5568;
+}
+
+[data-bs-theme="dark"] .empty-state h5 {
+    color: #e4e6eb;
+}
+
+[data-bs-theme="dark"] .empty-state p {
+    color: #b0b3b8;
+}
+
+/* === Accesos rápidos en modo oscuro === */
+[data-bs-theme="dark"] .bg-light {
+    background-color: #2a3550 !important;
+}
+
+[data-bs-theme="dark"] .bg-light:hover {
+    background-color: #3d4f6f !important;
+}
+
+/* === Scrollbar en modo oscuro === */
+[data-bs-theme="dark"] ::-webkit-scrollbar-track {
+    background: #1a1a2e;
+}
+
+[data-bs-theme="dark"] ::-webkit-scrollbar-thumb {
+    background: linear-gradient(135deg, #4e73df 0%, #224abe 100%);
+}
+
+/* === Botón de modo oscuro === */
+#darkModeToggle {
+    border-radius: 50px;
+    padding: 0.4rem 0.8rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+#darkModeToggle i {
+    transition: transform 0.3s ease;
+}
+
+#darkModeToggle:hover i {
+    transform: rotate(20deg);
+}
+
+[data-bs-theme="dark"] #darkModeToggle {
+    background-color: #2a3550;
+    border-color: #3d4f6f;
+    color: #ffc107;
+}
+
+[data-bs-theme="dark"] #darkModeToggle:hover {
+    background-color: #3d4f6f;
+    border-color: #667eea;
+}
+
+/* === Dropdown en modo oscuro === */
+[data-bs-theme="dark"] .dropdown-menu {
+    background-color: #1f2940;
+    border-color: #3d4f6f;
+}
+
+[data-bs-theme="dark"] .dropdown-item {
+    color: #e4e6eb;
+}
+
+[data-bs-theme="dark"] .dropdown-item:hover {
+    background-color: #2a3550;
+    color: #fff;
+}
+
+/* === Alerts en modo oscuro === */
+[data-bs-theme="dark"] .alert {
+    border: none;
+}
+
+[data-bs-theme="dark"] .alert-info {
+    background-color: rgba(79, 172, 254, 0.2);
+    color: #4facfe;
+}
+
+[data-bs-theme="dark"] .alert-success {
+    background-color: rgba(56, 239, 125, 0.2);
+    color: #38ef7d;
+}
+
+[data-bs-theme="dark"] .alert-warning {
+    background-color: rgba(245, 175, 25, 0.2);
+    color: #f5af19;
+}
+
+[data-bs-theme="dark"] .alert-danger {
+    background-color: rgba(255, 65, 108, 0.2);
+    color: #ff6b8a;
+}
+
+/* === Modales en modo oscuro === */
+[data-bs-theme="dark"] .modal-content {
+    background-color: #1f2940;
+    border-color: #3d4f6f;
+}
+
+[data-bs-theme="dark"] .modal-header {
+    border-bottom-color: #3d4f6f;
+}
+
+[data-bs-theme="dark"] .modal-footer {
+    border-top-color: #3d4f6f;
+}
+
+[data-bs-theme="dark"] .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+}
+
+/* === Links en modo oscuro === */
+[data-bs-theme="dark"] a:not(.btn):not(.nav-link):not(.badge) {
+    color: #7c9bea;
+}
+
+[data-bs-theme="dark"] a:not(.btn):not(.nav-link):not(.badge):hover {
+    color: #a0b9f5;
+}
+
+/* === Filter card en modo oscuro === */
+[data-bs-theme="dark"] .filter-card {
+    background: linear-gradient(135deg, #1f2940 0%, #2a3550 100%);
+    border-left: 4px solid #667eea;
+}
+
+/* === Paginación en modo oscuro === */
+[data-bs-theme="dark"] .page-link {
+    background-color: #1f2940;
+    border-color: #3d4f6f;
+    color: #e4e6eb;
+}
+
+[data-bs-theme="dark"] .page-link:hover {
+    background-color: #2a3550;
+    border-color: #667eea;
+    color: #fff;
+}
+
+[data-bs-theme="dark"] .page-item.active .page-link {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-color: transparent;
+}
+
+[data-bs-theme="dark"] .page-item.disabled .page-link {
+    background-color: #16213e;
+    border-color: #3d4f6f;
+    color: #6c757d;
 }
