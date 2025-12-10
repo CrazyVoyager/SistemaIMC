@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.EntityFrameworkCore;
 using OfficeOpenXml;
-using SistemaIMC.Data;
 using QuestPDF.Infrastructure;
+using SistemaIMC.Data;
+using SistemaIMC.Services;
 
 ExcelPackage.LicenseContext = LicenseContext.NonCommercial;
 
@@ -10,7 +11,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
-
+builder.Services.AddScoped<ServicioImportacionMasiva>();
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {

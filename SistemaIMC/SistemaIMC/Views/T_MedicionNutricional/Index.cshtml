@@ -1,4 +1,4 @@
-﻿@* Ubicación: SistemaIMC/Views/T_MedicionNutricional/Index.cshtml *@
+﻿﻿@* Ubicación: SistemaIMC/Views/T_MedicionNutricional/Index.cshtml *@
 
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -21,6 +21,14 @@
             {
                 <a asp-action="Create" class="btn btn-primary">
                     <i class="fas fa-plus me-1"></i> Nueva Medición
+                </a>
+            }
+
+            @* Botón: Importar Mediciones (CSV) - NUEVO *@
+            @if (puedeEditar)
+            {
+                <a asp-controller="ImportacionMasiva" asp-action="Mediciones" class="btn btn-outline-primary" title="Importar Mediciones desde CSV">
+                    <i class="fas fa-file-import me-1"></i> Importar (CSV)
                 </a>
             }
 

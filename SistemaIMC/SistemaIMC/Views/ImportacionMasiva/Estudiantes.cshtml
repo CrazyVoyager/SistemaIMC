@@ -1,0 +1,43 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Importar Estudiantes (Excel)";
+}
+<div class="container">
+    <h1 class="h3 mb-4">Importar Estudiantes (.xlsx)</h1>
+
+    @if (TempData["BulkError"] != null)
+    {
+        <div class="alert alert-danger">@TempData["BulkError"]</div>
+    }
+
+    @if (TempData["BulkResult"] != null)
+    {
+        <div class="alert alert-success">@TempData["BulkResult"]</div>
+    }
+
+    @if (TempData["BulkErrors"] != null)
+    {
+        <div class="card mb-3">
+            <div class="card-header">Errores / Advertencias</div>
+            <div class="card-body">
+                <pre style="white-space: pre-wrap;">@TempData["BulkErrors"]</pre>
+            </div>
+        </div>
+    }
+
+    <div class="card mb-3">
+        <div class="card-body">
+            <p>Formato Excel esperado (hoja 1, fila 1 = encabezado):</p>
+            <pre>RUT,NombreCompleto,FechaNacimiento,ID_Sexo,ID_Establecimiento,NombreEstablecimiento,ID_Curso,NombreCurso,EstadoRegistro</pre>
+            <p>Ejemplo: revisa ViewBag.SampleXlsx</p>
+            <form asp-action="Estudiantes" asp-controller="ImportacionMasiva" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="file" class="form-label">Archivo Excel (.xlsx)</label>
+                    <input class="form-control" type="file" name="file" accept=".xlsx" id="file" required />
+                </div>
+                <button class="btn btn-primary" type="submit">Importar Estudiantes</button>
+                <a class="btn btn-secondary" href="@Url.Action("Index", "T_Estudiante")">Volver al listado</a>
+            </form>
+        </div>
+    </div>
+</div>
